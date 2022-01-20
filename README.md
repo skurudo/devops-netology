@@ -103,4 +103,4 @@ https://github.com/skurudo/devops-netology
 
 
 # Расположение файлов
-((https://drive.google.com/drive/folders/1_9p0-OgUinI2JP8WQY9BDNpEFnrFuXxp?usp=sharing GDrive))
+https://drive.google.com/drive/folders/1_9p0-OgUinI2JP8WQY9BDNpEFnrFuXxp?usp=sharing
