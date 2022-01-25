@@ -1,6 +1,7 @@
 # devops-netology
 DEVSYS-16 - Pavel Galkin
 
+# change to task 2.1
 
 #Домашнее задание к занятию «2.1. Системы контроля версий.»
 
