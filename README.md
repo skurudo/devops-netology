@@ -1,6 +1,8 @@
 # devops-netology
 DEVSYS-16 - Pavel Galkin
 
+# pycharm test edit!
+
 # test edit
 
 #Домашнее задание к занятию «2.1. Системы контроля версий.»
