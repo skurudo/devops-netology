@@ -1,10 +1,3 @@
-# devops-netology
-DEVSYS-16 - Pavel Galkin
-
-# pycharm test edit!
-
-# test edit
-
 #Домашнее задание к занятию «2.1. Системы контроля версий.»
 
 ##Задание №1 – Создать и настроить репозиторий для дальнейшей работы на курсе.
@@ -87,6 +80,8 @@ DEVSYS-16 - Pavel Galkin
 1. получили персональный токен
 2. git push
 
+
+
 ## Задание №2 – Знакомство с документаций
 +++ done
 
@@ -99,10 +94,5 @@ https://github.com/skurudo/devops-netology
 3. наверное стоило упомянуть сразу про git commit -a -m 'Another commit'
 
 
-
-
-
-
-
 # Расположение файлов
-https://drive.google.com/drive/folders/1_9p0-OgUinI2JP8WQY9BDNpEFnrFuXxp?usp=sharing
+https://drive.google.com/drive/folders/1rDiJ6KdWisHLk4WlWxqtxJ_RCZDfKYzp?usp=sharing
