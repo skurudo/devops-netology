@@ -60,10 +60,10 @@ depth=0 C = RU, ST = MSK, L = Moscow, O = WWWA, OU = HomeBase, CN = test.ru, ema
 
 ## 4. Проверьте на TLS уязвимости произвольный сайт в интернете (кроме сайтов МВД, ФСБ, МинОбр, НацБанк, РосКосмос, РосАтом, РосНАНО и любых госкомпаний, объектов КИИ, ВПК ... и тому подобное).
 
-vagrant@vagrant:~$ sudo snap install testssl
-testssl 3.0.4snap1 from Kyle Fazzari (kyrofa) installed
+`` vagrant@vagrant:~$ sudo snap install testssl
+testssl 3.0.4snap1 from Kyle Fazzari (kyrofa) installed ``
 
-vagrant@vagrant:~$ testssl skurudo.ru
+`` vagrant@vagrant:~$ testssl skurudo.ru
  Testing protocols via sockets except NPN+ALPN
  SSLv2      not offered (OK)
  SSLv3      not offered (OK)
@@ -72,13 +72,13 @@ vagrant@vagrant:~$ testssl skurudo.ru
  TLS 1.2    offered (OK)
  TLS 1.3    offered (OK): final
  NPN/SPDY   h2, http/1.1 (advertised)
- ALPN/HTTP2 h2, http/1.1 (offered)
+ ALPN/HTTP2 h2, http/1.1 (offered) ``
  
  или так...
  
- vagrant@vagrant:~$ sudo apt install nmap
+ ``vagrant@vagrant:~$ sudo apt install nmap ``
  
- vagrant@vagrant:~$  nmap --script ssl-cert,ssl-enum-ciphers -p 443 skurudo.ru
+ ``vagrant@vagrant:~$  nmap --script ssl-cert,ssl-enum-ciphers -p 443 skurudo.ru
 Starting Nmap 7.80 ( https://nmap.org ) at 2022-02-28 20:15 UTC
 Nmap scan report for skurudo.ru (195.2.70.110)
 Host is up (0.0025s latency).
@@ -124,7 +124,7 @@ PORT    STATE SERVICE
 |     cipher preference: server
 |_  least strength: A
 
-Nmap done: 1 IP address (1 host up) scanned in 1.15 seconds
+Nmap done: 1 IP address (1 host up) scanned in 1.15 seconds``
  
 ## 5. Установите на Ubuntu ssh сервер, сгенерируйте новый приватный ключ. Скопируйте свой публичный ключ на другой сервер. Подключитесь к серверу по SSH-ключу.
 
@@ -134,18 +134,18 @@ $ ssh-copy-id vagrant@test.test.ru
 
 ## 6. Переименуйте файлы ключей из задания 5. Настройте файл конфигурации SSH клиента, так чтобы вход на удаленный сервер осуществлялся по имени сервера.
 
-$ touch ~/.ssh/config
+``$ touch ~/.ssh/config
 $ chmod 600 ~/.ssh/config
 $ mv ~/.ssh/id_rsa.pub ~/.ssh/test.key
-$ nano ~/.ssh/config
+$ nano ~/.ssh/config``
 
-Host test
+``Host test
     HostName test.test.ru
     User vagrant
     Port 22
-	IdentityFile ~/.ssh/test.key
+	IdentityFile ~/.ssh/test.key``
 	
-$ ssh test
+``$ ssh test``
 	
 ## 7. Соберите дамп трафика утилитой tcpdump в формате pcap, 100 пакетов. Откройте файл pcap в Wireshark.
 
@@ -164,7 +164,7 @@ $ sudo tcpdump -c 100 -i ens3 -w 100.pcap
 ## 8*. Просканируйте хост scanme.nmap.org. Какие сервисы запущены?
 ssh, http, nping-echo
 
-vagrant@vagrant:~$ nmap –sV scanme.nmap.org
+``vagrant@vagrant:~$ nmap –sV scanme.nmap.org
 vagrant@vagrant:~$ nmap scanme.nmap.org
 Starting Nmap 7.80 ( https://nmap.org ) at 2022-02-28 20:17 UTC
 Nmap scan report for scanme.nmap.org (45.33.32.156)
@@ -176,29 +176,29 @@ PORT     STATE SERVICE
 80/tcp   open  http
 9929/tcp open  nping-echo
 
-Nmap done: 1 IP address (1 host up) scanned in 17.23 seconds
+Nmap done: 1 IP address (1 host up) scanned in 17.23 seconds``
 
 ## 9*. Установите и настройте фаервол ufw на web-сервер из задания 3. Откройте доступ снаружи только к портам 22,80,443
-vagrant@vagrant:~$ sudo apt install ufw
+``vagrant@vagrant:~$ sudo apt install ufw
 Reading package lists... Done
 Building dependency tree
 Reading state information... Done
 ufw is already the newest version (0.36-6ubuntu1).
-0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.
+0 upgraded, 0 newly installed, 0 to remove and 39 not upgraded.``
 
-vagrant@vagrant:~$ ufw status
+``vagrant@vagrant:~$ ufw status
 ERROR: You need to be root to run this script
 vagrant@vagrant:~$ sudo ufw status
-Status: inactive
+Status: inactive``
 
-vagrant@vagrant:~$ sudo ufw default deny incoming
+``vagrant@vagrant:~$ sudo ufw default deny incoming
 Default incoming policy changed to 'deny'
 (be sure to update your rules accordingly)
 vagrant@vagrant:~$ sudo ufw default allow outgoing
 Default outgoing policy changed to 'allow'
-(be sure to update your rules accordingly)
+(be sure to update your rules accordingly)``
 
-vagrant@vagrant:~$ sudo ufw allow 22
+`` vagrant@vagrant:~$ sudo ufw allow 22
 Rules updated
 Rules updated (v6)
 vagrant@vagrant:~$ sudo ufw allow 80
@@ -209,10 +209,10 @@ Rules updated
 Rules updated (v6)
 vagrant@vagrant:~$ sudo ufw enable
 Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
-Firewall is active and enabled on system startup
+Firewall is active and enabled on system startup ``
 
-vagrant@vagrant:~$ sudo ufw status
-Status: active
+`` vagrant@vagrant:~$ sudo ufw status 
+Status: active 
 
 To                         Action      From
 --                         ------      ----
@@ -221,4 +221,4 @@ To                         Action      From
 443                        ALLOW       Anywhere
 22 (v6)                    ALLOW       Anywhere (v6)
 80 (v6)                    ALLOW       Anywhere (v6)
-443 (v6)                   ALLOW       Anywhere (v6)
+443 (v6)                   ALLOW       Anywhere (v6) ``
