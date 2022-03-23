@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 import socket
+import json
+import yaml
 
-check_names=["drive.google.com", "mail.google.com", "google.com"]
-check_ip=["0.0.0.0", "0.0.0.0", "0.0.0.0"]
+with open('name.json', 'r') as j:
+name_listold = json.load(j)
+name_list = name_listold.copy()
 
-for i in range(0, 3):
-    check_ip[i] = socket.gethostbyname(check_names[i])
-    #print(check_names[i] + ' - ' + check_ip[i])
- 
-z=0
-while z<100:
-    for i in range(0, 3):
-        if check_ip[i] != socket.gethostbyname(check_names[i]):                
-            print("EROR", check_names[i], " IP mismatch: ", check_ip[i], socket.gethostbyname(check_names[i]))
+for names in name_list:
+    ips =  socket.gethostbyname(names)
+    name_list[names] = ips
+        if name_list.get(names) != name_listold.get(names):
+            print("[error]: ", names, " IP mismatch: ", name_listold.get(names), " New ip: ", name_list.get(names),)
         else:
-            print(check_names[i] + ' - ' + check_ip[i])
-z=z+1
-    
-        
+            print(names, "new ip: ", name_list.get(names))
+
+    with open('name.json', 'w') as j:
+        j.write(json.dumps(name_list))
+    with open('name.yaml', 'w') as yam:
+        yam.write(yaml.dump(name_list))
+
