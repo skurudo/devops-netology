@@ -42,8 +42,12 @@ TriggeredBy: ● docker.socket
              └─998714 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
 ```
 
-* ищем образ ->  docker search nginx
-* скачиваем nginx -> docker pull ubuntu/nginx
+* ищем образ ->  
+``` docker search nginx ```
+
+* скачиваем nginx -> 
+``` docker pull ubuntu/nginx ```
+
 ```
 $  docker images
 REPOSITORY   TAG       IMAGE ID       CREATED      SIZE
@@ -51,8 +55,10 @@ nginx          latest    fa5269854a5e   5 days ago   142MB
 ubuntu/nginx   latest    33345394c4b7   6 days ago   144MB
 ```
 
-* запускаем-проверяем -> docker run -d -p 8181:80 ubuntu/nginx:latest
-* lynx localhost:8181
+* запускаем-проверяем -> 
+```docker run -d -p 8181:80 ubuntu/nginx:latest ```
+
+* ``` lynx localhost:8181 ```
 
 ```
     Welcome to nginx!
@@ -103,7 +109,7 @@ I'm DevOps Engineer!
 ```
 
 * и в хаб
-docker push skurudo/customngix:v03
+``` docker push skurudo/customngix:v03 ```
 
 
 PS: Подозреваю, что задачу решить проще, используя COPY в /var/www/html/ внутрь контейнера специально подготовленный индексный файл, но было интересно попробовать commit метод.
@@ -178,8 +184,10 @@ $ docker pull debian
 ```
 
 * создаем общую папку
-```$ mkdir ~/docker/data
 ```
+$ mkdir ~/docker/data
+```
+
 * запускаем контейнеры с общей папкой
 ```$ docker run --name=centosd -d -v /root/docker/data:/data -t centos:latest  
 $ docker run --name=debiand -d -v /root/docker/data:/data -t debian:latest ```
