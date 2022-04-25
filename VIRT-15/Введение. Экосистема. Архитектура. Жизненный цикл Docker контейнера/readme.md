@@ -81,25 +81,25 @@ RUN apt-get install -qy nano
 ```
 
 * собираем своё
-docker build -t customngix:v02 docker/
+```docker build -t customngix:v02 docker/```
 
 * запускаем своё
-docker run -it -d customngix:v02 bash
+```docker run -it -d customngix:v02 bash```
 
 * ищем своё для входа
-docker ps
+```docker ps```
 
 * входим, чтобы сделать изменения
-docker exec -it d5ce495f0b9d bash
+```docker exec -it d5ce495f0b9d bash```
 
 * редактируем файл и выходим
-nano /var/www/html/index.nginx-debian.html && exit
+```nano /var/www/html/index.nginx-debian.html && exit```
 
 * закачиваем в хаб
-docker commit d5ce495f0b9d skurudo/customngix:v03
+```docker commit d5ce495f0b9d skurudo/customngix:v03```
 
 * проверяем, все ли получилось
-lynx localhost:9191
+```lynx localhost:9191```
 
 * ну вроде оно самое
 ```
@@ -177,7 +177,8 @@ PS: Подозреваю, что задачу решить проще, испо�
 ### Ответ на задачу 3
 
 * берем образы для выполнения задания
-```$ docker search centos
+```
+$ docker search centos
 $ docker pull centos
 $ docker search debian
 $ docker pull debian
@@ -189,8 +190,10 @@ mkdir ~/docker/data
 ```
 
 * запускаем контейнеры с общей папкой
-```$ docker run --name=centosd -d -v /root/docker/data:/data -t centos:latest  
-$ docker run --name=debiand -d -v /root/docker/data:/data -t debian:latest ```
+```
+$ docker run --name=centosd -d -v /root/docker/data:/data -t centos:latest  
+$ docker run --name=debiand -d -v /root/docker/data:/data -t debian:latest 
+```
 
 * проверяем, что у нас запущены контейнеры
 ```$ docker ps
@@ -237,7 +240,9 @@ dsfdsf
 ### Ответ на задачу 4
 
 * берем образ
+```
 $ docker pull ubuntu
+```
 
 * готовим dockerfile
 ```
@@ -258,7 +263,7 @@ CMD [ "ansible-playbook", "--version" ]
 ```
 
 * делаем билд
-$ docker build -t ansiblecustom:v00 docker/
+```$ docker build -t ansiblecustom:v00 docker/```
 
 ```
 Step 3/5 : RUN mkdir /ansible &&     mkdir -p /etc/ansible &&     echo 'localhost' > /etc/ansible/hosts
@@ -278,13 +283,13 @@ Successfully tagged ansiblecustom:v00
 ```
 
 * логинимся
-$ docker login
+```$ docker login```
 
 * добавляем тэг
-docker tag f3bf9ccd3c23 skurudo/ansiblecustom:v01
+```docker tag f3bf9ccd3c23 skurudo/ansiblecustom:v01```
 
 * добавляем в докер хам
-docker push skurudo/ansiblecustom:v01
+```docker push skurudo/ansiblecustom:v01```
 
 * получилось :-)
 https://hub.docker.com/r/skurudo/ansiblecustom
