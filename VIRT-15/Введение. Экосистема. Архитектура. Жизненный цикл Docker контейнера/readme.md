@@ -262,9 +262,10 @@ WORKDIR /ansible
 CMD [ "ansible-playbook", "--version" ]
 ```
 
-* делаем билд
+* делаем билд 
 ```$ docker build -t ansiblecustom:v00 docker/```
 
+* концовка вывода
 ```
 Step 3/5 : RUN mkdir /ansible &&     mkdir -p /etc/ansible &&     echo 'localhost' > /etc/ansible/hosts
  ---> Running in 70676870fb57
