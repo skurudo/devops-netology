@@ -217,10 +217,13 @@ docker exec -it debiand /bin/bash
 ```
 
 * проверяем листинг и содержимое
-```root@d255e2feb1b3:/# ls /data
+```
+root@d255e2feb1b3:/# ls /data
 centos-01.txt  host-file.txt
 ```
-```root@d255e2feb1b3:/# cat /data/centos-01.txt && cat /data/host-file.txt
+
+```
+root@d255e2feb1b3:/# cat /data/centos-01.txt && cat /data/host-file.txt
 erer
 dsfdsf
 ```
