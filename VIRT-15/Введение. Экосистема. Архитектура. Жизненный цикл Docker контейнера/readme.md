@@ -185,7 +185,7 @@ $ docker pull debian
 
 * создаем общую папку
 ```
-$ mkdir ~/docker/data
+mkdir ~/docker/data
 ```
 
 * запускаем контейнеры с общей папкой
@@ -207,11 +207,13 @@ exit
 ```
 
 * делаем файл на хост машине 
-```dsfdsf > /root/docker/data/host-file.txt
+```
+dsfdsf > /root/docker/data/host-file.txt
 ```
 
 * заходим во второй контейнер
-```docker exec -it debiand /bin/bash
+```
+docker exec -it debiand /bin/bash
 ```
 
 * проверяем листинг и содержимое
