@@ -437,7 +437,7 @@ max_binlog_size = 100M (вот здесь как бы вопрос, а не inno
 * https://dev.mysql.com/doc/refman/8.0/en/replication-options-binary-log.html#sysvar_max_binlog_size
 
 
-- cat /etc/mysql/my.cnf
+cat /etc/mysql/my.cnf
 
 ```
 ## some skipped
