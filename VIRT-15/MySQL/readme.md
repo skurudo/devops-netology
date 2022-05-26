@@ -407,21 +407,26 @@ mysql> SHOW PROFILES;
 ### Ответ на задачу 4
 
 > - Скорость IO важнее сохранности данных
+
 innodb_flush_log_at_trx_commit = 0
 https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit
 
 > - Нужна компрессия таблиц для экономии места на диске
+
 раньше использовалось такое, насколько помню - innodb_file_format = Barracuda, но теперь приводит к ошибке: "[Server] unknown variable 'innodb_file_format=Barracuda'", а все потому что "The following InnoDB file format configuration options were deprecated in MySQL 5.7.7 and are now removed". Сейсас по всей видимости - innodb_file_per_table
 
 > - Размер буффера с незакомиченными транзакциями 1 Мб
+
 innodb_log_buffer_size = 1M
 https://dev.mysql.com/doc/refman/5.7/en/innodb-parameters.html#sysvar_innodb_log_buffer_size
 
 > - Буффер кеширования 30% от ОЗУ
+
 innodb_buffer_pool_size = 600M
 https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_buffer_pool_size
 
 > - Размер файла логов операций 100 Мб
+
 max_binlog_size = 100M (вот здесь как бы вопрос, а не innodb_log_file_size? вроде был max_binlog_size)
 https://dev.mysql.com/doc/refman/8.0/en/replication-options-binary-log.html#sysvar_max_binlog_size
 
