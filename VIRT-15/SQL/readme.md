@@ -355,6 +355,16 @@ test_db=# explain select c.family, o.name from clients c, orders o where c.zakaz
 (5 rows)
 ```
 
+- выполняем explain, команду, которая дает нам понимание, что происходит при каждом конкретном запросе;
+- в данном случае выполняется запрос, который показываетпользователей, которые совершили заказ;
+- Hash Join - используется для объдинения двух наборов записей (тоже имеет затраты - cost, а также rows/with);
+- cost - это некое сферическое, насколько понимаю, понятие, которое позволяет нам оценить затратность запроса; 
+- rows - приблизительное количество возвращаемых строк возвращаемых запросом;
+- width - средний объем строки в байтах;
+- Hash Cond - условие;
+- Seq Scan - проводит последовательное, блок за блоком, чтение данных таблицы;
+
+
 ## Задача 6
 > Создайте бэкап БД test_db и поместите его в volume, предназначенный для бэкапов (см. Задачу 1).
 > Остановите контейнер с PostgreSQL (но не удаляйте volumes).
@@ -365,7 +375,7 @@ test_db=# explain select c.family, o.name from clients c, orders o where c.zakaz
 ### Ответ на задачу 6
 
 - pg_dumpall -h localhost -U test-admin-user > /home/vagrant/data12/test_db.sql
-- или можно использовать команду и сделать не в текстовом формате: pg_dump -U postgres -Fc test_db > /home/vagrant/data12/test_db2.sql
+- или можно использовать команду: pg_dump -U postgres -Fc test_db > /home/vagrant/data12/test_db2.sql
 
 - ls -la /home/vagrant/data12/
 
@@ -409,7 +419,7 @@ test_db.sql
 
 - psql -U postgres -f test_db.sql
 
-- или, если не в текстовом формате: pg_restore -U postgres -v -C -d test_db test_db2.sql
+- или, если не в текстовом формате pg_restore -U postgres -v -C -d test_db test_db2.sql
 
 ```
 SET
