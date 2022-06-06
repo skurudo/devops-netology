@@ -130,7 +130,7 @@ is 1.2.2. You can update by downloading from www.terraform.io/downloads.html
 - https://github.com/warrensbox/terraform-switcher
 
 попробуем вторую (плюсиков меньше, но оно на го):
-- curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash
+- curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | sudo bash
 - sudo /usr/local/bin/tfswitch
 
 ```
