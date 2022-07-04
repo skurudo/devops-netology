@@ -29,12 +29,12 @@
 
 1. aws_sqs_queue
 	* С каким другим параметром конфликтует `name`? Приложите строчку кода, в которой это указано.
-	"ConflictsWith: []string{"name_prefix"}" - https://github.com/hashicorp/terraform-provider-aws/blob/main/internal/service/sqs/queue.go#L87
+	``` "ConflictsWith: []string{"name_prefix"}" ``` - https://github.com/hashicorp/terraform-provider-aws/blob/main/internal/service/sqs/queue.go#L87
 	
     * Какая максимальная длина имени? 
     
 	80
-	re = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,80}$`) - https://github.com/hashicorp/terraform-provider-aws/blob/main/internal/service/sqs/queue.go#L427
+	``` re = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,80}$`) ``` - https://github.com/hashicorp/terraform-provider-aws/blob/main/internal/service/sqs/queue.go#L427
 	
 	* Какому регулярному выражению должно подчиняться имя? 
     
