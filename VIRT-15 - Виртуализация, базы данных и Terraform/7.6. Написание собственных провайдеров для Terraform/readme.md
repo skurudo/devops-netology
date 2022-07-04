@@ -37,6 +37,7 @@
     * Какая максимальная длина имени? 
     
 	80
+	
 	``` re = regexp.MustCompile(`^[a-zA-Z0-9_-]{1,80}$`) ``` 
 	
 	Link - https://github.com/hashicorp/terraform-provider-aws/blob/main/internal/service/sqs/queue.go#L427
