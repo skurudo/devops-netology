@@ -1,5 +1,3 @@
-# Pavel Galkin - DEVOPS16
-
 local k = (import 'ksonnet-util/kausal.libsonnet');
 
 {
