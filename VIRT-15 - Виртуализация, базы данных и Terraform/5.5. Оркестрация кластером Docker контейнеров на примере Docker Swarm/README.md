@@ -74,7 +74,7 @@ Build 'yandex' finished after 4 minutes 41 seconds.
 Обновляем токен (наш протух):
 
 ```
-yc iam service-account --folder-id b1gqpnr6ba58jcqk0264 list
+yc iam service-account --folder-id ... list
 yc iam key create --folder-name default --service-account-name default-sa --output key.json
 yc config set service-account-key key.json
 yc iam create-token
