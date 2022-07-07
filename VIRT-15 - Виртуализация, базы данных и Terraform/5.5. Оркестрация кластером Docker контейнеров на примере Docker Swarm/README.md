@@ -236,14 +236,17 @@ vbky9sire60g69njdw8vk8uyp     node06.netology.yc   Ready     Active             
 ```
 
 Лидер поменялся:
-```[centos@node01 ~]$ sudo docker node ls
+
+```
+[centos@node01 ~]$ sudo docker node ls
 ID                            HOSTNAME             STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
 xyr7u8f0mvr24ycpztingw69v *   node01.netology.yc   Ready     Active         Reachable        20.10.17
 s1jdgobweci1qfvf1sb6guuk5     node02.netology.yc   Ready     Active         Leader           20.10.17
 scti70shglq5agx2jz0te56bm     node03.netology.yc   Ready     Active         Reachable        20.10.17
 3oak4md76d7kk4go2gd6bteol     node04.netology.yc   Ready     Active                          20.10.17
 k4mtwguvox9q2rbnayw4zmstn     node05.netology.yc   Ready     Active                          20.10.17
-vbky9sire60g69njdw8vk8uyp     node06.netology.yc   Ready     Active                          20.10.17```
+vbky9sire60g69njdw8vk8uyp     node06.netology.yc   Ready     Active                          20.10.17
+```
 
 ---
 
