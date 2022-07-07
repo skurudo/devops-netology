@@ -51,30 +51,39 @@ docker node ls
 
 Делаем правки centos-7-base.json
 
-```folder_id и token```
+```
+folder_id и token
+```
 
 после проверки packer запускает build
 
-```$ packer build centos-7-base.json```
+```
+$ packer build centos-7-base.json
+```
 
 Успешненько:
 
-```Build 'yandex' finished after 4 minutes 41 seconds.
+```
+Build 'yandex' finished after 4 minutes 41 seconds.
 ==> Wait completed after 4 minutes 41 seconds
 ==> Builds finished. The artifacts of successful builds are:
---> yandex: A disk image was created: centos-7-base (id: fd85b24m06e37c8l0p21) with family name centos```
+--> yandex: A disk image was created: centos-7-base (id: fd85b24m06e37c8l0p21) with family name centos
+```
 
 
 Обновляем токен (наш протух):
 
-```yc iam service-account --folder-id b1gqpnr6ba58jcqk0264 list
+```
+yc iam service-account --folder-id b1gqpnr6ba58jcqk0264 list
 yc iam key create --folder-name default --service-account-name default-sa --output key.json
 yc config set service-account-key key.json
-yc iam create-token```
+yc iam create-token
+```
 
 Идем в terraform - init
 
-```vagrant@dev-docker:~/05-virt-05-docker-swarm/src/terraform$ terraform init
+```
+vagrant@dev-docker:~/05-virt-05-docker-swarm/src/terraform$ terraform init
 
 Initializing the backend...
 
@@ -93,7 +102,8 @@ Terraform has created a lock file .terraform.lock.hcl to record the provider
 selections it made above. Include this file in your version control repository
 so that Terraform can guarantee to make the same selections by default when
 you run "terraform init" in the future.
-Terraform has been successfully initialized!```
+Terraform has been successfully initialized!
+```
 
 Далее...
 
@@ -123,6 +133,7 @@ internal_ip_address_node06 = "192.168.101.16"
 ```
 
 Выполнилось:
+
 ```
 vagrant@dev-docker:~/05-virt-05-docker-swarm/src/terraform$ ssh centos@51.250.88.199
 [centos@node01 ~]$ docker node ls
