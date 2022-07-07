@@ -1,4 +1,4 @@
-# begining
+# begining of the end
 
 ## [DevOps и системное администрирование](https://github.com/skurudo/devops-netology/tree/main/DEVSYS-16%20-%20DevOps%20%D0%B8%20%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%BD%D0%BE%D0%B5%20%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%B8%D1%81%D1%82%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5)
 
@@ -6,4 +6,8 @@
 
 ## [CI, мониторинг и управление конфигурациями](none)
 
-# of the end
+---
+
+### [DEVPY-2 - Основы языка программирования Python](https://github.com/skurudo/devops-netology/tree/main/DEVPY-2%20-%20Основы%20языка%20программирования%20Python)
+
+### [PYFREE-12 - Python-разработка для начинающих](https://github.com/skurudo/devops-netology/tree/main/PYFREE-12%20-%20Python-разработка%20для%20начинающих)
