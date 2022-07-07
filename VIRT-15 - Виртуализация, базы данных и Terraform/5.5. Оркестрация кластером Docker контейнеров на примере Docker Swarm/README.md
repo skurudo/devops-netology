@@ -50,12 +50,15 @@ docker node ls
 ### Ответ на задачу 2
 
 Делаем правки centos-7-base.json
+
 ```folder_id и token```
 
 после проверки packer запускает build
+
 ```$ packer build centos-7-base.json```
 
 Успешненько:
+
 ```Build 'yandex' finished after 4 minutes 41 seconds.
 ==> Wait completed after 4 minutes 41 seconds
 ==> Builds finished. The artifacts of successful builds are:
@@ -63,6 +66,7 @@ docker node ls
 
 
 Обновляем токен (наш протух):
+
 ```yc iam service-account --folder-id b1gqpnr6ba58jcqk0264 list
 yc iam key create --folder-name default --service-account-name default-sa --output key.json
 yc config set service-account-key key.json
@@ -134,6 +138,7 @@ vbky9sire60g69njdw8vk8uyp     node06.netology.yc   Ready     Active             
 ```
 
 ![делается](01-01.jpg)
+
 ![сделалося](01-02.jpg)
 
 
@@ -161,14 +166,16 @@ evkx7jg6xfy0   swarm_monitoring_unsee              replicated   1/1        cloud
 
 
 ![делается](02-01.jpg)
+
 ![сделалося](02-02.jpg)
+
 ![сделалося](02-03.jpg)
 
 ## Задача 4 (*)
 
 Выполнить на лидере Docker Swarm кластера команду (указанную ниже) и дать письменное описание её функционала, что она делает и зачем она нужна:
 ```
-# см.документацию: https://docs.docker.com/engine/swarm/swarm_manager_locking/
+см.документацию: https://docs.docker.com/engine/swarm/swarm_manager_locking/
 docker swarm update --autolock=true
 ```
 
@@ -213,7 +220,9 @@ k4mtwguvox9q2rbnayw4zmstn     node05.netology.yc   Ready     Active             
 vbky9sire60g69njdw8vk8uyp     node06.netology.yc   Ready     Active                          20.10.17
 ```
 
-```[centos@node01 ~]$ sudo docker swarm unlock```
+```
+[centos@node01 ~]$ sudo docker swarm unlock
+```
 
 Лидер поменялся:
 ```[centos@node01 ~]$ sudo docker node ls
