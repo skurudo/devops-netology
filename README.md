@@ -5,3 +5,9 @@
 ## [Виртуализация, базы данных и Terraform](https://github.com/skurudo/devops-netology/tree/main/VIRT-15%20-%20%D0%92%D0%B8%D1%80%D1%82%D1%83%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F%2C%20%D0%B1%D0%B0%D0%B7%D1%8B%20%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B8%20Terraform)
 
 ## [CI, мониторинг и управление конфигурациями](none)
+
+---
+
+### [DEVPY-2 - Основы языка программирования Python](https://github.com/skurudo/devops-netology/tree/main/DEVPY-2%20-%20Основы%20языка%20программирования%20Python)
+
+### [PYFREE-12 - Python-разработка для начинающих](https://github.com/skurudo/devops-netology/tree/main/PYFREE-12%20-%20Python-разработка%20для%20начинающих)
