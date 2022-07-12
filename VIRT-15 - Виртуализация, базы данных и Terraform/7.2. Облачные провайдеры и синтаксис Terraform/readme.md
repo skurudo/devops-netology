@@ -56,7 +56,7 @@ provider "yandex" {
 
 ```
 $ export TF_VAR_yc_token
-vagrant@dev-docker:~/07-terraform-02-syntax$ export TF_VAR_yc_cloud_id
+$ export TF_VAR_yc_cloud_id
 ```
 
 ## Задача 2. Создание aws ec2 или yandex_compute_instance через терраформ
@@ -97,10 +97,11 @@ vagrant@dev-docker:~/07-terraform-02-syntax$ export TF_VAR_yc_cloud_id
 
 > 2. Ссылку на репозиторий с исходной конфигурацией терраформа.  
 
-В первом варианте секреты убраны в variables.tf, во втором появилось еще более интересное кмк решение
-[Ссылка на репозиторий]()
+**В первом варианте** секреты убраны в variables.tf, во втором появилось еще более интересное кмк решение
 
-[](01.jpg)
+[Ссылка на репозиторий](https://github.com/skurudo/devops-netology/tree/main/VIRT-15%20-%20%D0%92%D0%B8%D1%80%D1%82%D1%83%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F%2C%20%D0%B1%D0%B0%D0%B7%D1%8B%20%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B8%20Terraform/7.2.%20%D0%9E%D0%B1%D0%BB%D0%B0%D1%87%D0%BD%D1%8B%D0%B5%20%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D1%8B%20%D0%B8%20%D1%81%D0%B8%D0%BD%D1%82%D0%B0%D0%BA%D1%81%D0%B8%D1%81%20Terraform/src-01)
+
+![Сделалося](https://github.com/skurudo/devops-netology/blob/main/VIRT-15%20-%20%D0%92%D0%B8%D1%80%D1%82%D1%83%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F%2C%20%D0%B1%D0%B0%D0%B7%D1%8B%20%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B8%20Terraform/7.2.%20%D0%9E%D0%B1%D0%BB%D0%B0%D1%87%D0%BD%D1%8B%D0%B5%20%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D1%8B%20%D0%B8%20%D1%81%D0%B8%D0%BD%D1%82%D0%B0%D0%BA%D1%81%D0%B8%D1%81%20Terraform/01.jpg)
 
 ```
 vagrant@dev-docker:~/07-terraform-02-syntax$ terraform init
@@ -147,8 +148,8 @@ external_ip_address_test_vm = "51.250.67.157"
 internal_ip_address_test_vm = "192.168.10.8"
 ```
 
-Второй вариант позволяет не держать переменные в файле, но требует их ручного ввода.. это не слишком эстетично, но довольно забавно, ведь секреты мы вовсе не храним тогда
+**Второй вариант** позволяет не держать переменные в файле, но требует их ручного ввода.. это не слишком эстетично, но довольно забавно, ведь секреты мы вовсе не храним тогда
 
-[Ссылка на репозиторий]()
-[](02.jpg)
-[](03.jpg)
+[Ссылка на репозиторий](https://github.com/skurudo/devops-netology/tree/main/VIRT-15%20-%20%D0%92%D0%B8%D1%80%D1%82%D1%83%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F%2C%20%D0%B1%D0%B0%D0%B7%D1%8B%20%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B8%20Terraform/7.2.%20%D0%9E%D0%B1%D0%BB%D0%B0%D1%87%D0%BD%D1%8B%D0%B5%20%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D1%8B%20%D0%B8%20%D1%81%D0%B8%D0%BD%D1%82%D0%B0%D0%BA%D1%81%D0%B8%D1%81%20Terraform/src-02)
+![Сделалося](https://github.com/skurudo/devops-netology/blob/main/VIRT-15%20-%20%D0%92%D0%B8%D1%80%D1%82%D1%83%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F%2C%20%D0%B1%D0%B0%D0%B7%D1%8B%20%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B8%20Terraform/7.2.%20%D0%9E%D0%B1%D0%BB%D0%B0%D1%87%D0%BD%D1%8B%D0%B5%20%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D1%8B%20%D0%B8%20%D1%81%D0%B8%D0%BD%D1%82%D0%B0%D0%BA%D1%81%D0%B8%D1%81%20Terraform/02.jpg)
+![Сделалося](https://github.com/skurudo/devops-netology/blob/main/VIRT-15%20-%20%D0%92%D0%B8%D1%80%D1%82%D1%83%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F%2C%20%D0%B1%D0%B0%D0%B7%D1%8B%20%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B8%20Terraform/7.2.%20%D0%9E%D0%B1%D0%BB%D0%B0%D1%87%D0%BD%D1%8B%D0%B5%20%D0%BF%D1%80%D0%BE%D0%B2%D0%B0%D0%B9%D0%B4%D0%B5%D1%80%D1%8B%20%D0%B8%20%D1%81%D0%B8%D0%BD%D1%82%D0%B0%D0%BA%D1%81%D0%B8%D1%81%20Terraform/03.jpg)
