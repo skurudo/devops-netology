@@ -206,7 +206,7 @@ Swarm updated.
 To unlock a swarm manager after it restarts, run the `docker swarm unlock`
 command and provide the following key:
 
-    SWMKEY-1-uhsdzKY6FnxrOQ9PcZhiwBg/UajORtaBadYri6djg0g
+    SWMKEY-1-uhs....
 
 Please remember to store this key in a password manager, since without it you
 will not be able to restart the manager.

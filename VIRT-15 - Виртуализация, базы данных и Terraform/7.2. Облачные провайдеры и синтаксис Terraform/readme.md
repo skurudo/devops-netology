@@ -2,33 +2,6 @@
 
 ---
 
-## Задача 1 (вариант с AWS). Регистрация в aws и знакомство с основами (необязательно, но крайне желательно)
-
-> Остальные задания можно будет выполнять и без этого аккаунта, но с ним можно будет увидеть полный цикл процессов.
-> AWS предоставляет достаточно много бесплатных ресурсов в первый год после регистрации, подробно описано [здесь](https://aws.amazon.com/free/).
->
-> 1. Создайте аккаут aws.
-> 1. Установите c aws-cli <https://aws.amazon.com/cli/>.
-> 1. Выполните первичную настройку aws-sli <https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html>.
-> 1. Создайте IAM политику для терраформа c правами
-   >
-   > * AmazonEC2FullAccess
-   > * AmazonS3FullAccess
-   > * AmazonDynamoDBFullAccess
-   > * AmazonRDSFullAccess
-   > * CloudWatchFullAccess
-   > * IAMFullAccess
-   >
-> 1. Добавьте переменные окружения
->
->     ```
->     export AWS_ACCESS_KEY_ID=(your access key id)
->     export AWS_SECRET_ACCESS_KEY=(your secret access key)
->     ```
->
-> 1. Создайте, остановите и удалите ec2 инстанс (любой с пометкой `free tier`) через веб интерфейс.
-> В виде результата задания приложите вывод команды `aws configure list`.
->
 > ## Задача 1 (Вариант с Yandex.Cloud). Регистрация в ЯО и знакомство с основами (необязательно, но крайне желательно)
 >
 > 1. Подробная инструкция на русском языке содержится [здесь]
@@ -40,6 +13,51 @@
 > не указывать авторизационный токен в коде, а терраформ провайдер брал его из переменных окружений.
 
 ### Ответ на задачу 1
+1. done
+2. done
+3. подготовимся...
+   * добавим блок с провайдером:
+
+```
+nano ~/.terraformrc
+```
+```
+provider_installation {
+  network_mirror {
+    url = "https://terraform-mirror.yandexcloud.net/"
+    include = ["registry.terraform.io/*/*"]
+  }
+  direct {
+    exclude = ["registry.terraform.io/*/*"]
+  }
+}
+```
+
+   * добавим блок провайдера:
+```
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+  required_version = ">= 0.13"
+}
+
+provider "yandex" {
+  token     = "<OAuth>"
+  cloud_id  = "<идентификатор облака>"
+  folder_id = "<идентификатор каталога>"
+  zone      = "<зона доступности по умолчанию>"
+}
+```
+
+4. подготовимся к перемернным окружения
+
+```
+$ export TF_VAR_yc_token
+vagrant@dev-docker:~/07-terraform-02-syntax$ export TF_VAR_yc_cloud_id
+```
 
 ## Задача 2. Создание aws ec2 или yandex_compute_instance через терраформ
 >
@@ -72,3 +90,65 @@
 > 1. Ссылку на репозиторий с исходной конфигурацией терраформа.  
 
 ### Ответ на задачу 2
+
+> 1. Ответ на вопрос: при помощи какого инструмента (из разобранных на прошлом занятии) можно создать свой образ ami?
+
+[Packer](https://www.packer.io/)
+
+> 2. Ссылку на репозиторий с исходной конфигурацией терраформа.  
+
+В первом варианте секреты убраны в variables.tf, во втором появилось еще более интересное кмк решение
+[Ссылка на репозиторий]()
+
+[](01.jpg)
+
+```
+vagrant@dev-docker:~/07-terraform-02-syntax$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Reusing previous version of yandex-cloud/yandex from the dependency lock file
+- Using previously-installed yandex-cloud/yandex v0.76.0
+
+Terraform has been successfully initialized!
+```
+
+```
+vagrant@dev-docker:~/07-terraform-02-syntax$ terraform plan
+...
+Changes to Outputs:
+  + external_ip_address_node01_yandex_cloud = (known after apply)
+  + internal_ip_address_node01_yandex_cloud = "192.168.101.11"
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't guarantee to take exactly these actions if you
+run "terraform apply" now.
+```
+
+```
+yandex_vpc_network.my-network: Creating...
+yandex_vpc_network.my-network: Creation complete after 1s [id=enp72seo79pp84rnamra]
+yandex_vpc_subnet.my-subnet: Creating...
+yandex_vpc_subnet.my-subnet: Creation complete after 1s [id=e9bih4pq1ealhg45od4i]
+yandex_compute_instance.test: Creating...
+yandex_compute_instance.test: Still creating... [10s elapsed]
+yandex_compute_instance.test: Still creating... [20s elapsed]
+yandex_compute_instance.test: Still creating... [30s elapsed]
+yandex_compute_instance.test: Still creating... [40s elapsed]
+yandex_compute_instance.test: Creation complete after 45s [id=fhm646e8t1gqbte8ceoo]
+
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+external_ip_address_test_vm = "51.250.67.157"
+internal_ip_address_test_vm = "192.168.10.8"
+```
+
+Второй вариант позволяет не держать переменные в файле, но требует их ручного ввода.. это не слишком эстетично, но довольно забавно, ведь секреты мы вовсе не храним тогда
+
+[Ссылка на репозиторий]()
+[](02.jpg)
+[](03.jpg)
