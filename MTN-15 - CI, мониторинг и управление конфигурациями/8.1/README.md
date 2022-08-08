@@ -517,3 +517,24 @@ ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    s
 
 #### 6. Все изменения должны быть зафиксированы и отправлены в вашей личный репозиторий.
 
+```
+vagrant@dev-ansible:~/devops-netology-tests$ git add .
+vagrant@dev-ansible:~/devops-netology-tests$ git commit -m "second part"
+[master 1e9e54f] second part
+ 6 files changed, 18 insertions(+), 18 deletions(-)
+ rewrite ansible/81/group_vars/all/examp.yml (88%)
+ rewrite ansible/81/group_vars/deb/examp.yml (100%)
+ rewrite ansible/81/group_vars/el/examp.yml (100%)
+ create mode 100644 ansible/81/group_vars/fedor/examp.yml
+ delete mode 100644 ansible/81/group_vars/local/examp.yml
+vagrant@dev-ansible:~/devops-netology-tests$ git push
+Enumerating objects: 27, done.
+Counting objects: 100% (27/27), done.
+Delta compression using up to 2 threads
+Compressing objects: 100% (8/8), done.
+Writing objects: 100% (15/15), 1.26 KiB | 161.00 KiB/s, done.
+Total 15 (delta 2), reused 0 (delta 0)
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To github.com:skurudo/devops-netology-tests.git
+   9dea2bb..1e9e54f  master -> master
+```
