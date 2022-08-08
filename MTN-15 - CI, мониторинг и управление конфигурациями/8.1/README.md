@@ -339,44 +339,181 @@ ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    s
 
 #### 12. Заполните `README.md` ответами на вопросы. Сделайте `git push` в ветку `master`. В ответе отправьте ссылку на ваш открытый репозиторий с изменённым `playbook` и заполненным `README.md`.
 
+Доступно по ссылке ниже:
 https://github.com/skurudo/devops-netology-tests/tree/master/ansible/81
 
+
+## Необязательная часть
+
+#### 1. При помощи `ansible-vault` расшифруйте все зашифрованные файлы с переменными.
+
 ```
-### Самоконтроль выполненения задания
+vagrant@dev-ansible:~/devops-netology-tests/ansible/81$ sudo ansible-vault decrypt --ask-vault-password group_vars/deb/* group_vars/el/*
 
-#### 1. Где расположен файл с `some_fact` из второго пункта задания?
-
-playbook/group_vars/all/examp.yml
-
-#### 2. Какая команда нужна для запуска вашего `playbook` на окружении `test.yml`?
-
-$ ansible-playbook site.yml -i inventory/test.yml
-
-#### 3. Какой командой можно зашифровать файл?
-
-$ ansible-vault encrypt group_vars/deb/examp.yml
-
-#### 4. Какой командой можно расшифровать файл?
-
-$ ansible-vault decrypt group_vars/deb/examp.yml
-
-#### 5. Можно ли посмотреть содержимое зашифрованного файла без команды расшифровки файла? Если можно, то как?
-
-$ ansible-vault view group_vars/deb/examp.yml
-
-#### 6. Как выглядит команда запуска `playbook`, если переменные зашифрованы?
-
-$ ansible-playbook -i inventory/prod.yml site.yml --ask-vault-pass
-
-#### 7. Как называется модуль подключения к host на windows?
-
-ansible_connection: winrm
-
-#### 8. Приведите полный текст команды для поиска информации в документации ansible для модуля подключений ssh
-
-ansible-doc -t connection ssh
-
-#### 9. Какой параметр из модуля подключения `ssh` необходим для того, чтобы определить пользователя, под которым необходимо совершать подключение?
-
-remote_user
+Vault password:
+Decryption successful
 ```
+
+#### 2. Зашифруйте отдельное значение `PaSSw0rd` для переменной `some_fact` паролем `netology`. Добавьте полученное значение в `group_vars/all/exmp.yml`.
+
+```
+vagrant@dev-ansible:~/devops-netology-tests/ansible/81$ sudo ansible-vault encrypt_string "PaSSw0rd"
+New Vault password:
+Confirm New Vault password:
+Encryption successful
+!vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          64366662376566633937653932663866393432613164366339353934303764373362303037376161
+          6365346566613338636130333130356166393464353833630a343835353037343231333930643962
+          65646462313661363866353937613461303739646137316666396265363435366534633730343135
+          6630643132393934310a356333616361396435303366623930353237656465626236336465633035
+          3066
+```
+
+```
+vagrant@dev-ansible:~/devops-netology-tests/ansible/81$ cat group_vars/all/examp.yml
+---
+  some_fact: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          64366662376566633937653932663866393432613164366339353934303764373362303037376161
+          6365346566613338636130333130356166393464353833630a343835353037343231333930643962
+          65646462313661363866353937613461303739646137316666396265363435366534633730343135
+          6630643132393934310a356333616361396435303366623930353237656465626236336465633035
+          3066
+```
+
+#### 3. Запустите `playbook`, убедитесь, что для нужных хостов применился новый `fact`.
+
+```
+vagrant@dev-ansible:~/devops-netology-tests/ansible/81$ rm -rf group_vars/local
+vagrant@dev-ansible:~/devops-netology-tests/ansible/81$ sudo ansible-playbook -i inventory/prod.yml site.yml --ask-vault-pass
+Vault password:
+
+PLAY [Print os facts] *****************************************************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************************************************************************************************************************************************************************
+ok: [ubuntu]
+ok: [localhost]
+ok: [centos7]
+
+TASK [Print OS] ***********************************************************************************************************************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "CentOS"
+}
+ok: [ubuntu] => {
+    "msg": "Ubuntu"
+}
+ok: [localhost] => {
+    "msg": "Ubuntu"
+}
+
+TASK [Print fact] *********************************************************************************************************************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "el default fact"
+}
+ok: [ubuntu] => {
+    "msg": "deb default fact"
+}
+ok: [localhost] => {
+    "msg": "PaSSw0rd"
+}
+
+PLAY RECAP ****************************************************************************************************************************************************************************************************************************************************
+centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+
+#### 4. Добавьте новую группу хостов `fedora`, самостоятельно придумайте для неё переменную. В качестве образа можно использовать [этот](https://hub.docker.com/r/pycontribs/fedora).
+
+Запустим доп контейнер
+
+```
+sudo docker run --name fedora -d pycontribs/fedora:latest sleep 36000000
+```
+
+Добавим в инвентори и груп_ворс
+
+```
+$ cat  /home/vagrant/devops-netology-tests/ansible/81/inventory/prod.yml
+---
+  el:
+    hosts:
+      centos7:
+        ansible_connection: docker
+  deb:
+    hosts:
+      ubuntu:
+        ansible_connection: docker
+  fedor:
+    hosts:
+      fedora:
+        ansible_connection: docker
+  local:
+    hosts:
+      localhost:
+        ansible_connection: local
+```
+
+```
+vagrant@dev-ansible:~/devops-netology-tests/ansible/81$ cat group_vars/fedor/examp.yml
+---
+  some_fact: "fedor default facts"
+```
+
+```
+vagrant@dev-ansible:~/devops-netology-tests/ansible/81$ sudo ansible-playbook -i inventory/prod.yml site.yml --ask-vault-pass
+Vault password:
+
+PLAY [Print os facts] *****************************************************************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ****************************************************************************************************************************************************************************************************************************************
+ok: [localhost]
+ok: [fedora]
+ok: [ubuntu]
+ok: [centos7]
+
+TASK [Print OS] ***********************************************************************************************************************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "CentOS"
+}
+ok: [ubuntu] => {
+    "msg": "Ubuntu"
+}
+ok: [fedora] => {
+    "msg": "Fedora"
+}
+ok: [localhost] => {
+    "msg": "Ubuntu"
+}
+
+TASK [Print fact] *********************************************************************************************************************************************************************************************************************************************
+ok: [centos7] => {
+    "msg": "el default fact"
+}
+ok: [ubuntu] => {
+    "msg": "deb default fact"
+}
+ok: [fedora] => {
+    "msg": "fedor default facts"
+}
+ok: [localhost] => {
+    "msg": "PaSSw0rd"
+}
+
+PLAY RECAP ****************************************************************************************************************************************************************************************************************************************************
+centos7                    : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+fedora                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+localhost                  : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+ubuntu                     : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+```
+
+
+#### 5. Напишите скрипт на bash: автоматизируйте поднятие необходимых контейнеров, запуск ansible-playbook и остановку контейнеров.
+
+Пропустил.. не очень понятно - каких автоматизации необходимы? если всех контейнеры подряд, то это перечисление команд из ДЗ в чистом виде по кругу.
+
+#### 6. Все изменения должны быть зафиксированы и отправлены в вашей личный репозиторий.
+
