@@ -30,6 +30,21 @@ vagrant@dev-ansible:~$ ansible --version
 ansible 2.9.6
 ```
 
+Но версия все равно староватая..
+
+```
+vagrant@dev-ansible:~/devops-netology-tests$sudo apt-get remove --purge ansible
+
+vagrant@dev-ansible:~/devops-netology-tests$sudo apt-add-repository ppa:ansible/ansible
+
+vagrant@dev-ansible:~/devops-netology-tests$sudo apt-get update
+
+vagrant@dev-ansible:~/devops-netology-tests$apt-get install ansible
+
+vagrant@dev-ansible:~/devops-netology-tests$ ansible --version
+ansible [core 2.12.7]
+```
+
 #### 2. Создайте свой собственный публичный репозиторий на github с произвольным именем.
 
 * https://github.com/skurudo/devops-netology-tests/
