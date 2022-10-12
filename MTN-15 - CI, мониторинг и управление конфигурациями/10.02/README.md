@@ -79,6 +79,26 @@ ddbca0d18b2d   sandbox_documentation   "/documentation/docu…"   6 minutes ago 
 ```    
     - curl http://localhost:8086/ping
 vagrant@dev-ansible:~/sandbox$
+
+    - root@dev-ansible:/home/vagrant/sandbox# curl -v http://localhost:8086/ping
+*   Trying 127.0.0.1:8086...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8086 (#0)
+> GET /ping HTTP/1.1
+> Host: localhost:8086
+> User-Agent: curl/7.68.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 204 No Content
+< Content-Type: application/json
+< Request-Id: 2ef0aff6-4a6f-11ed-8438-0242ac180002
+< X-Influxdb-Build: OSS
+< X-Influxdb-Version: 1.8.10
+< X-Request-Id: 2ef0aff6-4a6f-11ed-8438-0242ac180002
+< Date: Wed, 12 Oct 2022 20:48:10 GMT
+<
+* Connection #0 to host localhost left intact
 ```        
 
 ```   
@@ -90,6 +110,24 @@ vagrant@dev-ansible:~/sandbox$ curl http://localhost:8888
 ```    
     - curl http://localhost:9092/kapacitor/v1/ping
 vagrant@dev-ansible:~/sandbox$
+
+    - root@dev-ansible:/home/vagrant/sandbox# curl -v http://localhost:9092/kapacitor/v1/ping
+*   Trying 127.0.0.1:9092...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 9092 (#0)
+> GET /kapacitor/v1/ping HTTP/1.1
+> Host: localhost:9092
+> User-Agent: curl/7.68.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 204 No Content
+< Content-Type: application/json; charset=utf-8
+< Request-Id: 189d0aeb-4a6f-11ed-81f1-0242ac180005
+< X-Kapacitor-Version: 1.6.5
+< Date: Wed, 12 Oct 2022 20:47:33 GMT
+<
+* Connection #0 to host localhost left intact
 ```
 
 А также скриншот веб-интерфейса ПО chronograf (`http://localhost:8888`). 
