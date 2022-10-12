@@ -155,3 +155,64 @@ P.S.: если при запуске некоторые контейнеры б�
 ![003](https://github.com/skurudo/devops-netology/blob/main/MTN-15%20-%20CI%2C%20%D0%BC%D0%BE%D0%BD%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D0%BD%D0%B3%20%D0%B8%20%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D1%8F%D0%BC%D0%B8/10.02/003.jpg)
 
 ![004](https://github.com/skurudo/devops-netology/blob/main/MTN-15%20-%20CI%2C%20%D0%BC%D0%BE%D0%BD%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D0%BD%D0%B3%20%D0%B8%20%D1%83%D0%BF%D1%80%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D1%8F%D0%BC%D0%B8/10.02/004.jpg)
+
+**Полезные команды:**
+
+рестарт
+```
+sudo ./sandbox restart
+```
+
+просмотр лога
+```
+sudo ./sandbox logs telegraf
+```
+
+**Финальный конфиг файл telegraf:**
+```
+root@dev-ansible:/home/vagrant/sandbox# cat telegraf/telegraf.conf
+[agent]
+  interval = "5s"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "5s"
+  flush_jitter = "0s"
+  precision = ""
+  debug = false
+  quiet = false
+  logfile = ""
+  hostname = "$HOSTNAME"
+  omit_hostname = false
+
+[[outputs.influxdb]]
+  urls = ["http://influxdb:8086"]
+  database = "telegraf"
+  username = ""
+  password = ""
+  retention_policy = ""
+  write_consistency = "any"
+  timeout = "5s"
+
+[[inputs.docker]]
+  endpoint = "unix:///var/run/docker.sock"
+  container_names = []
+  timeout = "5s"
+  perdevice = true
+  total = false
+
+[[inputs.cpu]]
+[[inputs.system]]
+[[inputs.influxdb]]
+  urls = ["http://influxdb:8086/debug/vars"]
+#[[inputs.syslog]]
+[[inputs.disk]]
+  ignore_fs = ["tmpfs", "devtmpfs", "devfs", "iso9660", "overlay", "aufs", "squashfs"]
+[[inputs.mem]]
+#   ## Specify an ip or hostname with port - eg., tcp://localhost:6514, tcp://10.0.0.1:6514
+#   ## Protocol, address and port to host the syslog receiver.
+#   ## If no host is specified, then localhost is used.
+#   ## If no port is specified, 6514 is used (RFC5425#section-4.1).
+#  server = "tcp://localhost:6514"
+```
