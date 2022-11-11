@@ -1,0 +1,21 @@
+---
+- name: Install Clickhouse
+  hosts: clickhouse
+  roles:
+    - clickhouse
+  post_tasks:
+    - name: Create tables
+      ansible.builtin.command: "clickhouse-client --host 127.0.0.1 -q 'CREATE TABLE logs.file_log ({{ file_log_structure }}) ENGINE = Log();'"
+      register: create_tbl
+      failed_when: create_tbl.rc != 0 and create_tbl.rc != 57
+      changed_when: create_tbl.rc == 0
+
+- name: Install Vector
+  hosts: vector
+  roles:
+    - vector-role
+
+- name: Install Lighthouse
+  hosts: lighthouse
+  roles:
+    - lighthouse-role

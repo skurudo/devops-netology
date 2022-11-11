@@ -8,6 +8,8 @@
 
 Наша основная цель - разбить наш playbook на отдельные roles. Задача: сделать roles для clickhouse, vector и lighthouse и написать playbook для использования этих ролей. Ожидаемый результат: существуют три ваших репозитория: два с roles и один с playbook.
 
+<details><summary>.</summary>
+
 1. Создать в старой версии playbook файл `requirements.yml` и заполнить его следующим содержимым:
 
    ```yaml
@@ -28,11 +30,16 @@
 9. Переработайте playbook на использование roles. Не забудьте про зависимости lighthouse и возможности совмещения `roles` с `tasks`.
 10. Выложите playbook в репозиторий.
 11. В ответ приведите ссылки на оба репозитория с roles и одну ссылку на репозиторий с playbook.
+</details>  
 
----
+## Ответ на домашнее задание 8.4
 
-### Как оформить ДЗ?
+Для развертывания используем заранее заготовленные виртуальные машины в Яндекс.Облаке.
 
-Выполненное домашнее задание пришлите ссылкой на .md-файл в вашем репозитории.
+Данные по используемым машинам находятся в inventory.
 
----
+В плейбуке 3 play:
+1. Установка **Clickhouse**: `Install Clickhouse` используя роль [AlexeySetevoi/ansible-clickhouse](https://github.com/AlexeySetevoi/ansible-clickhouse)
+1. Установка **Vector**: `Install Vector` используя роль [vector-role](https://github.com/skurudo/devops-netology-vector-role)
+1. Установка **Lighthouse** c **nginx**: `Install Lighthouse` используя роль [lighthouse-role](https://github.com/skurudo/devops-netology-lighthouse-role)
+
