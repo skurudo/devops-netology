@@ -65,6 +65,7 @@
 * [Сравнительный анализ AMQP брокеров сообщений](https://www.okbsapr.ru/library/publications/shkola_kzi_chadov_mikhalchenko_2019/)
 * [Сравнение эффективности Redis, Kafka и RabbitMQ](https://medium.com/nuances-of-programming/сравниваем-эффективность-redis-kafka-и-rabbitmq-fcd363d5d8c)
 
+---
 
 ## Задача 3: API Gateway * (необязательная)
 
