@@ -223,7 +223,11 @@ token=$(kubectl -n kube-system get secret | grep default-token | cut -d " " -f1)
 kubectl -n kube-system describe secret $token
 ```
 
+![](001.png)
 
+![](002.png)
+
+![](003.png)
 
 ---
 
