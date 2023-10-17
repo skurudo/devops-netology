@@ -351,7 +351,7 @@ Address:        10.152.183.10:53
 
 3. Создаем сервис
 
-[deployment-v4-svc.yml](deployment-v4-svc)
+[deployment-v4-svc.yml](deployment-v4-svc.yml)
 
 ```
 # kubectl apply -f deployment-v4-svc.yml
