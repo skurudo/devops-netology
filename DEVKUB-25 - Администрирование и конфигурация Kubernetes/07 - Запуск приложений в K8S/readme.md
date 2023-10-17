@@ -310,7 +310,7 @@ Commercial support is available at
 
 1. Создаем сервис
 
-Манифест - [deployment-v4.yml] (deployment-v4.yml)
+Манифест - [deployment-v4.yml](deployment-v4.yml)
 
 ```
 # kubectl apply -f deployment-v4.yml
