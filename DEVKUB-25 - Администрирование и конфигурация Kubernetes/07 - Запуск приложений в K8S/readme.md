@@ -153,13 +153,13 @@ Events:            <none>
 ```
 microk8s kubectl port-forward services/multitool-svc 3000:80 --address="0.0.0.0"
 ```
-[001](001.png)
+![001](001.png)
 
 ```
 microk8s kubectl port-forward services/multitool-svc 3000:8080 --address="0.0.0.0"
 ```
 
-[002](002.png)
+![002](002.png)
 
 
 Создаем отдельный Pod с приложением multitool и убеждаемся с помощью curl, что из пода есть доступ до приложений из п.1. -- манифест
