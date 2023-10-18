@@ -114,7 +114,7 @@ sonar-scanner   -Dsonar.projectKey=Test   -Dsonar.sources=.   -Dsonar.host.url=h
 
 ### Ответ к заданию 3
 
-``
+```
 # mvn package
 [INFO] Scanning for projects...
 [INFO]
@@ -154,6 +154,7 @@ Java version: 11, vendor: Oracle Corporation, runtime: /opt/jdk/openjdk-11+28_li
 Default locale: en_US, platform encoding: UTF-8
 OS name: "linux", version: "3.10.0-1160.99.1.el7.x86_64", arch: "amd64", family: "unix"
 ```
+
 [pom.xml](pom.xml)
 
 ---
