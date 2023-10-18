@@ -13,32 +13,11 @@
 
 ### Первые шаги 
 
-Сразу же нарываемся на проблему... решается комментированием сценария
+Сразу же нарываемся на проблему... (здесь была масса проблем, половину из которых удалось решить)... но решается еще проще - ВСЕГДА проверяйте ВЕРСИЮ ansible. Наступил на грабли, было больно. В итоге проверил версию, обновил, все завелось отлично. Мастерская работа продела преподавателем.
 
-```
-sku@Angurva:~/mnt-homeworks/09-ci-03-cicd/infrastructure$ ansible-playbook site.yml -i inventory/cicd/hosts.yml
-ERROR! no action detected in task. This often indicates a misspelled module name, or incorrect module path.
-
-The error appears to have been in '/home/sku/mnt-homeworks/09-ci-03-cicd/infrastructure/site.yml': line 136, column 7, but may
-be elsewhere in the file depending on the exact syntax problem.
-
-The offending line appears to be:
-
-        line: 'vm.max_map_count=262144'
-    - name: Reboot VM
-      ^ here      
-```
-
-И снова проблема, но теперь с установкой PostgreSQL:
-
-```
-TASK [Install PostgreSQL repos] *****************************************************************************************************************************changed: [sonar-01]
-
-TASK [Install PostgreSQL] ***********************************************************************************************************************************fatal: [sonar-01]: FAILED! => {"changed": false, "msg": "Failure talking to yum: failure: repodata/repomd.xml from pgdg-common: [Errno 256] No more mirrors to try.\nhttps://download.postgresql.org/pub/repos/yum/common/redhat/rhel-7-x86_64/repodata/repomd.xml: [Errno -1] repomd.xml signature could not be verified for pgdg-common"}
-        to retry, use: --limit @/home/sku/mnt-homeworks/09-ci-03-cicd/infrastructure/site.retry
-
-PLAY RECAP **************************************************************************************************************************************************sonar-01                   : ok=9    changed=7    unreachable=0    failed=1
-```
+А также стоит сразу учесть на вражеской ОС, которую вы поставили:
+1) может отработать ipv6 
+2) быть включен firewall
 
 ## Знакомоство с SonarQube
 
@@ -53,6 +32,41 @@ PLAY RECAP *********************************************************************
 7. Исправьте ошибки, которые он выявил, включая warnings.
 8. Запустите анализатор повторно — проверьте, что QG пройдены успешно.
 9. Сделайте скриншот успешного прохождения анализа, приложите к решению ДЗ.
+
+
+### Ответ к заданию 1
+
+Установка и тестирование прошли успешно. 
+Совсем все баги победить не удалось, но удалось снизить их количество.
+
+![001](001)
+
+![002](002)
+
+![003](003)
+
+![004](004)
+
+![005](005)
+
+![006](006)
+
+Установка sonar-scanner
+- просто скачивается бинарник, кладется в папочку и делается PATH к нему
+
+```
+# sonar-scanner -v
+INFO: Scanner configuration file: /opt/sonar-scanner/conf/sonar-scanner.properties
+INFO: Project root configuration file: NONE
+INFO: SonarScanner 5.0.1.3006
+INFO: Java 17.0.7 Eclipse Adoptium (64-bit)
+INFO: Linux 3.10.0-1160.99.1.el7.x86_64 amd64
+```
+
+Запуск sonar-scanner
+```
+sonar-scanner   -Dsonar.projectKey=Test   -Dsonar.sources=.   -Dsonar.host.url=http://84.54.47.18:9000   -Dsonar.login=15b96289c57e65a9bcfbc7d741fffc557e956d61 -Dsonar.coverage.exclusions=fail.py
+```
 
 ## Знакомство с Nexus
 
@@ -69,6 +83,17 @@ PLAY RECAP *********************************************************************
 2. В него же загрузите такой же артефакт, но с version: 8_102.
 3. Проверьте, что все файлы загрузились успешно.
 4. В ответе пришлите файл `maven-metadata.xml` для этого артефекта.
+
+
+### Ответ к заданию 2
+
+![007](007)
+
+![008](008)
+
+![009](009)
+
+[maven-metadata.xml](maven-metadata.xml)
 
 ### Знакомство с Maven
 
@@ -87,10 +112,48 @@ PLAY RECAP *********************************************************************
 3. Проверьте директорию `~/.m2/repository/`, найдите ваш артефакт.
 4. В ответе пришлите исправленный файл `pom.xml`.
 
----
+### Ответ к заданию 3
 
-### Как оформить решение задания
+``
+# mvn package
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ---------------------------< netology:java >----------------------------
+[INFO] Building java 8_282
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-resources-plugin/3.3.1/maven-resources-plugin-3.3.1.pom
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-resources-plugin/3.3.1/maven-resources-plugin-3.3.1.pom (8.2 kB at 20 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-plugins/39/maven-plugins-39.pom
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-plugins/39/maven-plugins-39.pom (8.1 kB at
+169 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-parent/39/maven-parent-39.pom
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-parent/39/maven-parent-39.pom (48 kB at 578 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/org/apache/apache/29/apache-29.pom
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/apache/29/apache-29.pom (21 kB at 450 kB/s)
+...
+SKIP
+...
+Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-utils/3.4.2/plexus-utils-3.4.2.jar (267 kB at 2.8 MB/s)
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-compress/1.21/commons-compress-1.21.jar (1.0 MB at 9.3 MB/s)
+[WARNING] JAR will be empty - no content was marked for inclusion!
+[INFO] Building jar: /root/target/java-8_282.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.475 s
+[INFO] Finished at: 2023-10-18T13:32:53+03:00
+[INFO] ------------------------------------------------------------------------
+```
 
-Выполненное домашнее задание пришлите в виде ссылки на .md-файл в вашем репозитории.
+```
+# mvn --version
+Apache Maven 3.9.5 (57804ffe001d7215b5e7bcb531cf83df38f93546)
+Maven home: /opt/maven
+Java version: 11, vendor: Oracle Corporation, runtime: /opt/jdk/openjdk-11+28_linux
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "3.10.0-1160.99.1.el7.x86_64", arch: "amd64", family: "unix"
+```
+
 
 ---
