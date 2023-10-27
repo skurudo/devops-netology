@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: multitool-svc-nodeport
+spec:
+  selector:
+    app: multitool
+  ports:
+  - name: nginx80nodeport
+    nodePort: 30001
+    port: 80
+  - name: multitool8080nodeport
+    nodePort: 30002
+    port: 8080
+  type: NodePort
