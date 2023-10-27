@@ -231,7 +231,9 @@ WBITT Network MultiTool (with NGINX) - multitool-dep-66db5d96d4-9xw29 - 10.1.196
 5. манифесты Deployment и Service в решении
 
 [deployment-08.yml](deployment-08.yml)
+
 [service-08.yml](service-08.yml)
+
 [pod-08.yml](pod-08.yml)
 
 ------
