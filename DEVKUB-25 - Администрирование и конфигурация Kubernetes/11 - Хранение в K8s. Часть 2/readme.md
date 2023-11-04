@@ -21,6 +21,21 @@
 
 #### Ответ на задание 1
 
+```
+kubectl create ns hw11
+
+kubectl config set-context --current --namespace=hw11
+```
+
+```
+# kubectl create ns hw11
+namespace/hw11 created
+# kubectl config set-context --current --namespace=hw11
+Context "microk8s" modified.
+```
+
+
+
 ------
 
 ### Задание 2

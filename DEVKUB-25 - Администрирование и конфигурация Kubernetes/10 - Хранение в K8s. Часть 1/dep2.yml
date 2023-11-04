@@ -3,15 +3,15 @@ kind: DaemonSet
 metadata:
   name: deployment2
   labels:
-    app: dep1
+    app: dep2
 spec:
   selector:
     matchLabels:
-      app: dep1
+      app: dep2
   template:
     metadata:
       labels:
-        app: dep1
+        app: dep2
     spec:
       containers:
       - name: multitool
