@@ -1,0 +1,5 @@
+---
+# vars file for vector-role
+arch_centos: "x86_64"
+arch_ubuntu: "amd64"
+vector_config_path: /etc/vector/vector.yaml

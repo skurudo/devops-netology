@@ -1,0 +1,35 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+  options:
+    D: true
+    vv: true
+platforms:
+  - name: instance
+    image: docker.io/pycontribs/centos:8
+    pre_build_image: true
+  - name: instance
+    image: docker.io/pycontribs/ubuntu:latest
+    pre_build_image: true
+lint: | 
+   set -e
+   yamllint .
+   ansible-lint .
+
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+   - create
+   - converge
+   - lint
+   - idempotence
+   - verify
+   - destroy
+   - cleanup
+   - destroy
+  

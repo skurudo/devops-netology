@@ -1,0 +1,58 @@
+---
+# tasks file for vector-role
+- name: Creates directory /tmp/vector/
+  become: false
+  ansible.builtin.file:
+    path: /tmp/vector/
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: 0644
+- name: Get vector | EL
+  become: true
+  ansible.builtin.get_url:
+    url: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.{{ arch_centos }}.rpm"
+    dest: "/tmp/vector/vector-{{ vector_version }}-1.{{ arch_centos }}.rpm"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: 0644
+  when: ansible_facts['distribution'] == "CentOS"
+- name: Get vector | Ubuntu
+  become: true
+  ansible.builtin.get_url:
+    url: "https://packages.timber.io/vector/{{ vector_version }}/vector_{{ vector_version }}-1_{{ arch_ubuntu }}.deb"
+    dest: "/tmp/vector_{{ vector_version }}-1_{{ arch_ubuntu }}.deb"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+    mode: 0644
+  when: ansible_os_family == "Debian"
+- name: Install vector | EL
+  become: true
+  become_user: root
+  ansible.builtin.yum:
+    name: "/tmp/vector/vector-{{ vector_version }}-1.{{ arch_centos }}.rpm"
+    disable_gpg_check: true
+  when: ansible_facts['distribution'] == "CentOS"
+- name: Install vector | Ubuntu
+  become: true
+  become_user: root
+  ansible.builtin.apt:
+    deb: "/tmp/vector_{{ vector_version }}-1_{{ arch_ubuntu }}.deb"
+  when: ansible_os_family == "Debian" 
+- name: Copy vector-config
+  become: true
+  ansible.builtin.template:
+    src: vector.yaml.j2
+    dest:  "{{ vector_config_path }}"
+    owner: root
+    group: root
+    mode: '644'
+    validate: vector validate --no-environment --config-yaml %s
+- name: Create systemd unit Vector
+  become: true
+  ansible.builtin.template:
+    src: vector.service.j2
+    dest: /etc/systemd/system/vector.service
+    mode: 0644
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
