@@ -1,0 +1,6 @@
+---
+# defaults file for vector-role
+vector_version: "0.27.0" 
+clickhouse_user: clickhouse
+clickhouse_password: clickhouse
+clickhouse_host: 127.0.0.1

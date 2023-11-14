@@ -1,0 +1,26 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+  # options:
+  #   D: true
+  #   vv: true
+platforms:
+  - name: ubuntu
+    image: geerlingguy/docker-ubuntu2004-ansible
+    pre_build_image: true
+lint: |
+  set -e
+  ansible-lint .
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+   - destroy
+   - create
+   - converge
+   - idempotence
+   - destroy
