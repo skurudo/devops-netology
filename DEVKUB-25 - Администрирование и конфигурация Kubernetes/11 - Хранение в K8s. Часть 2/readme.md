@@ -34,6 +34,99 @@ namespace/hw11 created
 Context "microk8s" modified.
 ```
 
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment1
+  labels:
+    app: dep1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dep1
+  template:
+    metadata:
+      labels:
+        app: dep1
+    spec:
+      containers:
+
+      - name: busybox
+        image: busybox
+        command: ['sh', '-c', 'while true; do echo message from busybox! >> /output/output.txt; sleep 5; done']
+        volumeMounts:
+        - name: pv1
+          mountPath: /output
+
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: HTTP_PORT
+          value: "80"
+        volumeMounts:
+        - name: pv1
+          mountPath: /input
+
+      volumes:
+      - name: pv1
+        persistentVolumeClaim:
+          claimName: pvc1
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv1
+spec:
+  storageClassName: host-path
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteOnce
+  hostPath:
+    path: /data1/pv1
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc1
+spec:
+  storageClassName: host-path
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+```
+# kubectl apply -f hw11-dep1.yml
+deployment.apps/deployment1 created
+persistentvolume/pv1 created
+persistentvolumeclaim/pvc1 created
+```
+
+```
+# kubectl get all
+NAME                               READY   STATUS    RESTARTS   AGE
+pod/deployment1-699cf9cff8-27q5c   2/2     Running   0          3m38s
+
+NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/deployment1   1/1     1            1           3m38s
+
+NAME                                     DESIRED   CURRENT   READY   AGE
+replicaset.apps/deployment1-699cf9cff8   1         1         1       3m38s
+```
+
+```
+
+```
 
 
 ------
@@ -51,4 +144,7 @@ Context "microk8s" modified.
 
 
 #### Ответ на задание 2
+
+
+
 ------
