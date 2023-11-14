@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment2
+  labels:
+    app: depl2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: depl2
+  template:
+    metadata:
+      labels:
+        app: depl2
+    spec:
+      containers:
+
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: HTTP_PORT
+          value: "80"
+        volumeMounts:
+        - name: pv2
+          mountPath: /input
+
+      volumes:
+      - name: pv2
+        persistentVolumeClaim:
+          claimName: pvc1
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc1
+spec:
+  storageClassName: "nfs"
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
