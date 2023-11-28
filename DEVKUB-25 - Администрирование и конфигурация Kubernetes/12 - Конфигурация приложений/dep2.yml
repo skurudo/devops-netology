@@ -51,7 +51,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: ubuntu-001.dgt.local
+  - host: kub.nobr.local
     http:
       paths:
       - path: /
@@ -63,7 +63,7 @@ spec:
               number: 80
   tls:
   - hosts:
-    - ubuntu-001.dgt.local
+    - kub.nobr.local
     secretName: dep2-secret-tls
 
 ---
@@ -71,11 +71,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: dep2-cgfmap-html
-data:
-  index.html: |
+data:  index.html: |
     <html>
       <body>
-        <h1>Hello, I am nginx SSL.</h1>
+        <h1>Hello, I am nginx with SSL.</h1>
       </body>
     </html>
 

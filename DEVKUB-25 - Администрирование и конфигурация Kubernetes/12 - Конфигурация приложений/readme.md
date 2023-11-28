@@ -229,7 +229,42 @@ base64 selfsigned.crt
 kubectl apply -f hw12-dep2.yml
 ```
 
+```
+# curl -k https://kub.nobr.local
+<html>
+  <body>
+    <h1>Hello, I am nginx with SSL.</h1>
+  </body>
+</html>
+```
+
+```
+# wget --no-check-certificate https://kub.nobr.local
+Resolving kub.nobr.local (kub.nobr.local)... 127.0.0.1
+Connecting to kub.nobr.local (kub.nobr.local)|127.0.0.1|:443... connected.
+WARNING: cannot verify kub.nobr.local's certificate, issued by ‘CN=Kubernetes Ingress Controller Fake Certificate,O=Acme Co’:
+  Self-signed certificate encountered.
+WARNING: no certificate subject alternative name matches
+        requested host name ‘kub.nobr.local’.
+HTTP request sent, awaiting response... 200 OK
+Length: 75 [text/html]
+Saving to: ‘index.html’
+
+index.html                                     100%[=================================================================================================>]      75  --.-KB/s    in 0s
+
+(2.16 MB/s) - ‘index.html’ saved [75/75]
+
+root@kub:~# cat index.html
+<html>
+  <body>
+    <h1>Hello, I am nginx with SSL.</h1>
+  </body>
+</html>
+```
+
 5. Предоставить манифесты, а также скриншоты или вывод необходимых команд.
+
+* [dep2.yml](dep2.yml)
 
 #### Ответ на задание 2
 ------
