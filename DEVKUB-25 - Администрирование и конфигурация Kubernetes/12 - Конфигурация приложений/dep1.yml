@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dep1
+  name: dep1-depl
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dep1
+  template:
+    metadata:
+      labels:
+        app: dep1
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: dep1-html-vol
+          mountPath: /usr/share/nginx/html
+      - name: multitool
+        image: wbitt/network-multitool:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: HTTP_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: dep1-cfgmap
+              key: http-port
+        - name: HTTPS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: dep1-cfgmap
+              key: https-port
+      volumes:
+      - name: dep1-html-vol
+        configMap:
+          name: dep1-cgfmap-html
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dep1-cfgmap
+data:
+  http-port: "8080"
+  https-port: "11443"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dep1-cgfmap-html
+data:
+  index.html: |
+    <html>
+      <body>
+        <h1>Hello, I am nginx.</h1>
+      </body>
+    </html>
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dep1-svc
+spec:
+  selector:
+    app: dep1
+  ports:
+  - name: dep1-nginx-svc-port
+    port: 80
+    targetPort: 80
