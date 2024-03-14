@@ -32,7 +32,7 @@ version.BuildInfo{Version:"v3.14.3", GitCommit:"f03cc04caaa8f6d7c3e67cf918929150
 
 1. Необходимо упаковать приложение в чарт для деплоя в разные окружения. 
 
-Папка с приложением - [myapp](/myapp)
+Папка с приложением - [myapp](myapp)
 
 ```
 apiVersion: apps/v1
