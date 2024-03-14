@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nginx-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: myapp-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp-nginx
+  template:
+    metadata:
+      labels:
+        app: myapp-nginx
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-nginx
+        image: "nginx:{{ .Values.nginx_version.tag }}"
+        ports:
+        - containerPort: 80

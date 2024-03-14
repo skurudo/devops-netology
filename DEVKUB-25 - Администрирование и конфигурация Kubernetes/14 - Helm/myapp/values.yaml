@@ -1,0 +1,5 @@
+nginx_version:
+  tag: "1.24"
+
+multitool_version:
+  tag: "alpine-minimal"

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-multitool-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: myapp-multitool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp-multitool
+  template:
+    metadata:
+      labels:
+        app: myapp-multitool
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-multitool
+        image: "wbitt/network-multitool:{{ .Values.multitool_version.tag }}"
+        ports:
+        - containerPort: 80
+        env:
+        - name: HTTP_PORT
+          value: "80"

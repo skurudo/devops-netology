@@ -1,0 +1,5 @@
+nginx_version:
+  tag: "1.25"
+
+multitool_version:
+  tag: "latest"
