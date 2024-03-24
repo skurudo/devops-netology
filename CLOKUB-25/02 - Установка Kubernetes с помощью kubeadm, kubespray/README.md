@@ -28,7 +28,7 @@
 1. Сначала готовим виртуальные машины. 
    - дано - Hyper-V
    - дано - Vagrant
-2. Подбираем образ с Ubuntu 20.04 и поддержкой провайдера hyper-v
+2. Подбираем образ с Ubuntu 20.04 и поддержкой провайдера hyper-v (небольшое отступление: на сегодняшний день гораздо проще не возиться с питоном и взять 22.04 с уже версией питона выше > 3.10)
 3. Переходим в нужную нам директорию
 4. Добавляем box (вероятно может потребоваться VPN для скачивания)
 ```
@@ -200,8 +200,7 @@ Installing collected packages: resolvelib, netaddr, ruamel.yaml.clib, pycparser,
 Successfully installed MarkupSafe-2.1.3 ansible-9.3.0 ansible-core-2.16.4 cffi-1.16.0 cryptography-41.0.4 jinja2-3.1.2 jmespath-1.0.1 netaddr-0.9.0 packaging-24.0 pbr-5.11.1 pycparser-2.21 resolvelib-1.0.1 ruamel.yaml-0.18.5 ruamel.yaml.clib-0.2.8
 ```
 13. Подготовка исходя из адресов..
-
-![src02](src02.jpg)
+![src02-2](src02-2.jpg)
 ```
 cp -rfp inventory/sample inventory/mycluster
 
@@ -448,4 +447,4 @@ nginx-56fcf95486-lkkgv   1/1     Running   0          98s   10.233.71.1      nod
 nginx-56fcf95486-pxd52   1/1     Running   0          98s   10.233.102.129   node1   <none>           <none>
 ```
 
-![src02](src02.jpg)
+![src03](src03.jpg)
