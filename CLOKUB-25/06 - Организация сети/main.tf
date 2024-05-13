@@ -9,7 +9,7 @@ terraform {
 
 provider "yandex" {
   token     = "hidden-token"
-  cloud_id  = "b1gnmd8egu3k1q1vk71l"
+  cloud_id  = "b1ghc67uqv7k2pnhlbjb"
   folder_id = "b1gnmd8egu3k1q1vk71l"
   zone      = "ru-central1-b"
 }
