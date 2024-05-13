@@ -591,3 +591,26 @@ PING ya.ru (5.255.255.242) 56(84) bytes of data.
 64 bytes from ya.ru (5.255.255.242): icmp_seq=7 ttl=52 time=4.00 ms
 
 ```
+
+Убираем за собой:
+```
+terraform destroy -auto-approve
+```
+
+```
+yandex_vpc_route_table.net-rt: Destroying... [id=enpoo68dbfntsatujki2]
+yandex_vpc_route_table.net-rt: Destruction complete after 0s
+yandex_compute_instance.default: Destroying... [id=epdkehlsjo0pj0lrcl8j]
+yandex_compute_instance.default: Still destroying... [id=epdkehlsjo0pj0lrcl8j, 10s elapsed]
+yandex_compute_instance.default: Still destroying... [id=epdkehlsjo0pj0lrcl8j, 20s elapsed]
+yandex_compute_instance.default: Still destroying... [id=epdkehlsjo0pj0lrcl8j, 30s elapsed]
+yandex_compute_instance.default: Still destroying... [id=epdkehlsjo0pj0lrcl8j, 40s elapsed]
+yandex_compute_instance.default: Still destroying... [id=epdkehlsjo0pj0lrcl8j, 50s elapsed]
+yandex_compute_instance.default: Destruction complete after 56s
+yandex_vpc_subnet.public-subnet: Destroying... [id=e2lib0ncdtf7u0qq7s4m]
+yandex_vpc_subnet.public-subnet: Destruction complete after 2s
+yandex_vpc_network.network: Destroying... [id=enp7e5clfvrtu0bkbhuc]
+yandex_vpc_network.network: Destruction complete after 1s
+
+Destroy complete! Resources: 4 destroyed.
+```
