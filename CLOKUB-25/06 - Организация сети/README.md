@@ -79,7 +79,7 @@ source "/root/.bashrc"
 
 Создадим сервисный аккаунт
 ```
-yc iam service-account create --name sa-terraform
+yc iam key create --service-account-name sa-terraform --output key.json
 ```
 
 Проверяем
@@ -90,6 +90,8 @@ yc iam service-account create --name sa-terraform
 +----------------------+--------------+
 | здесь какой-то ID    | sa-terraform |
 +----------------------+--------------+
+
+# yc iam create-token
 ```
 
 2. Создали файл с описанием инфры - [main.tf](main.tf)
