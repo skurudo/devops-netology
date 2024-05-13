@@ -614,5 +614,5 @@ yandex_vpc_subnet.public-subnet: Destruction complete after 2s
 yandex_vpc_network.network: Destroying... [id=enp7e5clfvrtu0bkbhuc]
 yandex_vpc_network.network: Destruction complete after 1s
 
-Destroy complete! Resources: 4 destroyed.
+Destroy complete! Resources: 7 destroyed.
 ```
