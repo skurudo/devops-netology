@@ -1,22 +1,10 @@
-# Дипломный практикум в Yandex.Cloud по курсу "DevOps-инженер"
+# Дипломный практикум в Yandex.Cloud по курсу "DevOps-инженер" в Нетологии
 
-- [Дипломный практикум в Yandex.Cloud по курсу "DevOps-инженер"](#дипломный-практикум-в-yandexcloud-по-курсу-devops-инженер)
+- [Дипломный практикум в Yandex.Cloud по курсу "DevOps-инженер" в Нетологии](#дипломный-практикум-в-yandexcloud-по-курсу-devops-инженер-в-нетологии)
   - [Цели:](#цели)
   - [Этапы выполнения:](#этапы-выполнения)
     - [Планирование и проработка этапов выполнения](#планирование-и-проработка-этапов-выполнения)
     - [Подготовка - Gitlab](#подготовка---gitlab)
-        - [Сменим хостнейм](#сменим-хостнейм)
-        - [Немного украсим внешний вид](#немного-украсим-внешний-вид)
-        - [Обновим систему](#обновим-систему)
-        - [Установим софты](#установим-софты)
-        - [Установим docker](#установим-docker)
-        - [Установим helm](#установим-helm)
-        - [Установим terraform](#установим-terraform)
-        - [Установим yc](#установим-yc)
-        - [Сгенерируем ключи](#сгенерируем-ключи)
-        - [Подготовим docker-compose для Gitlab](#подготовим-docker-compose-для-gitlab)
-        - [Зададим пароль пользователя](#зададим-пароль-пользователя)
-        - [После входа заведем сразу runner - тип shell](#после-входа-заведем-сразу-runner---тип-shell)
     - [Создание облачной инфраструктуры](#создание-облачной-инфраструктуры)
     - [Создание Kubernetes кластера](#создание-kubernetes-кластера)
     - [Создание тестового приложения](#создание-тестового-приложения)
@@ -34,6 +22,8 @@
 5. Настроить CI для автоматической сборки и тестирования.
 6. Настроить CD для автоматического развёртывания приложения.
 
+[Оригинальный текст задания](readme.md)
+
 ---
 
 ## Этапы выполнения:
@@ -44,7 +34,7 @@
 * виртуальные сети
 * в облаке должно быть яндекс.регистри для сборок
 * в облаке должен быть бакет для терраформа 
-* виртуальные машины с kubernetes-кластером или **managed кластер**
+* виртуальные машины с kubernetes-кластером или managed кластер
 * внутри кластера у нас должен быть мониторинг
 * внутри кластера у нас должно быть приложение
 * домены и сертификаты для них
@@ -67,38 +57,44 @@
 <details>
   <summary>Подготовка операционной системы: softs, docker, helm, terraform, yc</summary>
 
-  ##### Сменим хостнейм
+  * **Сменим хостнейм**
   ```  hostnamectl set-hostname lab.galkin.work ```
 
-  ##### Немного украсим внешний вид
+  * **Немного украсим внешний вид**
   ``` cat /dev/null > .bash_profile; nano .bash_profile ```
 
-  ``` PS1="\[\033[1;36m\]\t \[\e[39m\][\[\e[31m\]\u\[\e[39m\]@\[\e[35m\]\h\[\e[39m\]:\[\e[1;34m\]\w\[\e[m\] \[\e[39m\]] \[\e[0;31m\]\$ \[\e[m\]\[\e[0;37m\]"
-export HISTTIMEFORMAT="%d/%m/%y %T "
+  ``` 
+  PS1="\[\033[1;36m\]\t \[\e[39m\][\[\e[31m\]\u\[\e[39m\]@\[\e[35m\]\h\[\e[39m\]:\[\e[1;34m\]\w\[\e[m\] \[\e[39m\]] \[\e[0;31m\]\$ \[\e[m\]\[\e[0;37m\]"
+  export HISTTIMEFORMAT="%d/%m/%y %T "
  ```
   
-  ##### Обновим систему
+  * **Обновим систему**
   ```  apt update && apt upgrade --yes --force-yes ```
 
-  ##### Установим софты
+  * **Установим софты**
    ``` apt install  mc curl wget htop vnstat monit ncdu nano git rsync host whois dnsutils sysstat iotop pwgen siege sshfs nmap p7zip-full screen nmap python3 python3-pip nmon expect pv etckeeper mtr auditd acct jq --yes  ```
 
-  ##### Установим docker
+  * **Установим docker**
    ``` sudo apt install apt-transport-https ca-certificates curl software-properties-common --yes && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &&  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable" &&  sudo apt-cache policy docker-ce &&  sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-compose --yes && sudo systemctl status docker &&  docker ps ```
 
-  ##### Установим helm
+  * **Установим helm**
   ```
   snap install helm --classic
   ```  
 
-  ##### Установим terraform
+  * **Установим kubectl**
+  ```
+  snap install kubectl --classic
+  ```  
+
+  * **Установим terraform**
   ```
   wget https://hashicorp-releases.yandexcloud.net/terraform/1.8.3/terraform_1.8.3_linux_amd64.zip
   unzip terraform_*_linux_amd64.zip
   sudo mv terraform /usr/local/bin/
   ```
 
-  Установим автоподстановки:
+  * **Установим автоподстановки**
 ```
 terraform -install-autocomplete
 ```
@@ -119,14 +115,14 @@ provider_installation {
 }
 ```
 
-  ##### Установим yc
+  * **Установим yc**
   ```
   curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
 
   source "/root/.bashrc"  
   ```
 
-  ##### Сгенерируем ключи
+  * **Сгенерируем ключи**
   ```
   ssh-keygen -t rsa
   ssh-keygen -t ed25519
@@ -139,7 +135,7 @@ provider_installation {
 <details>
   <summary>Запускаем Gitlab</summary>
 
-##### Подготовим docker-compose для Gitlab
+* **Подготовим docker-compose для Gitlab**
 
 docker-compose.yml
 
@@ -170,7 +166,7 @@ services:
 docker-compose up -d
 ```
 
-##### Зададим пароль пользователя
+* **Зададим пароль пользователя**
 
 ```
 docker exec -it gitlab /bin/bash
@@ -183,7 +179,7 @@ root
 ну-вы-поняли (по запросу)
 ```
 
-##### После входа заведем сразу runner - тип shell
+* **После входа заведем сразу runner - тип shell**
 
 ```
 # Download the binary for your system
@@ -222,12 +218,201 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 ### Создание облачной инфраструктуры
 
 <details>
-  <summary>Example</summary>
+  <summary>yc - инициализация</summary>
 
   ```
-  long console output here
+  yc init
+
+  получаем токен и проводим первоначальную настройку
   ```
 </details>
+
+<details>
+  <summary>yc - сервис-аккаунт и токен</summary>
+
+  Создаем сервисный аккаунт и получаем токеннс 
+
+  ```
+  yc iam service-account create sa-key
+  yc iam key create --service-account-name sa-key --output key.json
+
+  yc iam create-token
+  ```
+
+  ```
+  root@lab:~# yc iam service-account create sa-key
+  done (1s)
+  id: aje74mb2ucv975of1ud3
+  folder_id: b1gsk3plrk6l86to7geb
+  created_at: "2024-05-21T14:08:11.770461101Z"
+  ```
+
+  ```
+  root@lab:~# yc iam key create --service-account-name sa-key --output key.json
+  id: ajeqjbr8719fopi06o79
+  service_account_id: aje74mb2ucv975of1ud3
+  created_at: "2024-05-21T14:08:39.873190357Z"
+  key_algorithm: RSA_2048
+  ```
+
+  ```
+  root@lab:/opt/dev-one# yc iam create-token
+  t1.9euelZqelMaPk5KQyJmbnpCeksuUj-3rnpWalI2Tzs7LiZGck5zOz5TIzM_l8_cPO01N-e8TdWxf_N3z909pSk357xN1bF_8zef1656VmpLHmYqWkZTJjpSdkZqTm5KM7_zF656VmpLHmYqWkZTJjpSdkZqTm5KM.[CENSORED]
+  ```
+</details>
+
+<details>
+  <summary>Уточняем ID облака и каталога для указания в манифесте</summary>
+
+  ```
+  root@lab:/opt/dev-one# yc resource-manager cloud list
+  +----------------------+-------------+----------------------+
+  |          ID          |    NAME     |   ORGANIZATION ID    |
+  +----------------------+-------------+----------------------+
+  | b1gjruksal1mu1cb4lmv | thesis      | bpf0m4gb7drjlcg56asf |
+  +----------------------+-------------+----------------------+
+
+  root@lab:/opt/dev-one# yc resource-manager folder list
+  +----------------------+-------+--------+--------+
+  |          ID          | NAME  | LABELS | STATUS |
+  +----------------------+-------+--------+--------+
+  | b1gsk3plrk6l86to7geb | cloud |        | ACTIVE |
+  +----------------------+-------+--------+--------+
+  ```
+
+  Добавим переменные окружения
+  ```
+  export YC_TOKEN=$(yc iam create-token)
+  export YC_CLOUD_ID=$(yc config get cloud-id)
+  export YC_FOLDER_ID=$(yc config get folder-id)
+  ```
+
+  Добавим в переменные окружения идентификатор ключа и секретный ключ
+
+  ```
+  yc iam access-key create --service-account-name sa-key > key.json
+
+  cat key.json | grep key_id | awk '{print $2}'
+  cat key.json | grep secret | awk '{print $2}'
+
+  export ACCESS_KEY="<идентификатор_ключа>"
+  export SECRET_KEY="<секретный_ключ>"
+  ```
+</details>
+
+<details>
+  <summary>Манифест для создания бакета</summary>
+
+  ```
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+  required_version = ">= 0.13"
+}
+
+provider "yandex" {
+  token     = "t1.9euelZrOnZuTj8aZk5qVnIqLjZWQnO3rnpWalI2Tzs7LiZGck5zOz5TIzM_l8_dwdkxN-e8MZzg-_....."
+  cloud_id  = "b1gjruksal1mu1cb4lmv"
+  folder_id = "b1gsk3plrk6l86to7geb"
+  zone      = "ru-central1-b"
+}
+
+resource "yandex_iam_service_account" "sa" {
+  name = "sa-key-terra"
+}
+
+// Назначение роли сервисному аккаунту
+resource "yandex_resourcemanager_folder_iam_member" "sa-admin" {
+  folder_id = "b1gsk3plrk6l86to7geb"
+  role      = "storage.admin"
+  member    = "serviceAccount:${yandex_iam_service_account.sa.id}"
+}
+
+// Создание статического ключа доступа
+resource "yandex_iam_service_account_static_access_key" "sa-static-key" {
+  service_account_id = yandex_iam_service_account.sa.id
+  description        = "static access key for object storage"
+}
+
+// Создание бакета с использованием ключа
+resource "yandex_storage_bucket" "test" {
+  access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
+  secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
+  bucket     = "s3-dev-one"
+}
+  ```
+
+  [Документация по созданию бакета](https://yandex.cloud/ru/docs/storage/operations/buckets/create)
+</details>
+
+<details>
+
+  <summary>Стартуем создание бакета</summary>
+
+
+```
+nano backend.tf 
+
+terraform init
+terraform plan
+terraform apply
+```
+![terraform plan](terraform-bucket-init.png)
+
+![terraform plan](terraform-bucket-plan.png)
+
+</details>
+
+<details>
+  <summary>Добавляем backend для terraform</summary>
+
+```
+nano backend-s3.tf 
+```
+
+```
+terraform {
+  backend "s3" {
+    endpoints = {
+      s3 = "https://storage.yandexcloud.net"
+    }
+    bucket = "s3-dev-one"
+    region = "ru-central1"
+    key    = "state/terraform.tfstate"
+
+    skip_region_validation      = true
+    skip_credentials_validation = true
+    skip_requesting_account_id  = true # необходимая опция при описании бэкенда для Terraform версии 1.6.1 и старше.
+    skip_s3_checksum            = true # необходимая опция при описании бэкенда для Terraform версии 1.6.3 и старше.
+
+  }
+}
+```
+
+```
+terraform init -upgrade -reconfigure -backend-config="access_key=$ACCESS_KEY" -backend-config="secret_key=$SECRET_KEY"
+```
+
+![terraform plan](terraform-bucket-init2.png)
+
+![terraform plan](terraform-bucket-plan2.png)
+
+NB: В случае проблем стоит проверить роли сервисного аккаунта
+
+[Загрузка состояний Terraform в Yandex Object Storage](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-state-storage)
+</details>
+
+
+![yandex cloud state](yandex-cloud-s3-01.png)
+
+![yandex cloud state](yandex-cloud-s3-02.png)
+
+![yandex cloud state](yandex-cloud-s3-03.png)
+
+
 
 ### Создание Kubernetes кластера
 
