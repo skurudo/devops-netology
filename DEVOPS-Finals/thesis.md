@@ -6,11 +6,6 @@
     - [Планирование и проработка этапов выполнения](#планирование-и-проработка-этапов-выполнения)
     - [Подготовка - Gitlab](#подготовка---gitlab)
     - [Создание облачной инфраструктуры](#создание-облачной-инфраструктуры)
-    - [Создание Kubernetes кластера](#создание-kubernetes-кластера)
-    - [Создание тестового приложения](#создание-тестового-приложения)
-    - [Подготовка cистемы мониторинга и деплой приложения](#подготовка-cистемы-мониторинга-и-деплой-приложения)
-    - [Установка и настройка CI/CD](#установка-и-настройка-cicd)
-    - [Итоги выполнения работы](#итоги-выполнения-работы)
 
 ---
 ## Цели:
@@ -42,7 +37,7 @@
 С самого начала помимо динамической и изменяемой структуры в виде облака и всякого другого, у нас должен появится некий статичный элемент в виде хранилища кода и центра для деплоя. Этим краеугольным камнем станет Gitlab-сервер. Держать мы его будет отдельно, чтобы избежать дополнительных расходов.
 
 Общими мазками выглядит приблизительно так:
-![общая схема](scheme.png)
+![общая схема](img/scheme.png)
 
 Слева Gitlab - мощнейщий велосипед для почти всего. В нем мы будем держать данные по инфраструктуре и приложению. Будем стараться избежать монорепозитория. Отдельно будем хранить данные с манифестами терраформа по созданию сети, k8s кластера и отдельно по приложению, которое планируется деплоить в кластер.
 
@@ -129,7 +124,7 @@ provider_installation {
   ```  
 </details>
 
-![сервер Gitlab](gitlab-srv.png)
+![сервер Gitlab](img/gitlab-srv.png)
 
 
 <details>
@@ -201,11 +196,11 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 
 </details>
 
-![сервер Gitlab](gitlab-face.png)
+![сервер Gitlab](img/gitlab-face.png)
 
-![сервер Gitlab](gitlab-face2.png)
+![сервер Gitlab](img/gitlab-face2.png)
 
-![сервер Gitlab](gitlab-runner.png)
+![сервер Gitlab](img/gitlab-runner.png)
 
 
 Создадим в Gitlab несколько проектов. Как мы декларировали ранее, мы постараемся уйти от монорепозитория:
@@ -213,7 +208,7 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 - **app** - для нашего приложения
 - **monitor** - мониторинг
 
-![сервер Gitlab](gitlab-face3.png)
+![сервер Gitlab](img/gitlab-face3.png)
 
 ### Создание облачной инфраструктуры
 
@@ -230,7 +225,7 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 <details>
   <summary>yc - сервис-аккаунт и токен</summary>
 
-  Создаем сервисный аккаунт и получаем токеннс 
+  Создаем сервисный аккаунт и получаем токен 
 
   ```
   yc iam service-account create sa-key
@@ -240,11 +235,12 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
   ```
 
   ```
-  root@lab:~# yc iam service-account create sa-key
-  done (1s)
-  id: aje74mb2ucv975of1ud3
-  folder_id: b1gsk3plrk6l86to7geb
-  created_at: "2024-05-21T14:08:11.770461101Z"
+root@lab:~/v03# yc iam service-account create sa-key
+done (1s)
+id: ajeatu7jd5l3o85qrb1u
+folder_id: b1gsk3plrk6l86to7geb
+created_at: "2024-06-03T13:02:01.891878178Z"
+name: sa-key
   ```
 
   ```
@@ -301,157 +297,58 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 </details>
 
 <details>
-  <summary>Манифест для создания бакета</summary>
+  <summary>Создаем манифесты и делаем s3 backend</summary>
 
-  ```
-terraform {
-  required_providers {
-    yandex = {
-      source = "yandex-cloud/yandex"
-    }
-  }
-  required_version = ">= 0.13"
-}
+Данные c исходниками в каталоге с [исходниками](src/pro-one-infra/init/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
 
-provider "yandex" {
-  token     = "t1.9euelZrOnZuTj8aZk5qVnIqLjZWQnO3rnpWalI2Tzs7LiZGck5zOz5TIzM_l8_dwdkxN-e8MZzg-_....."
-  cloud_id  = "b1gjruksal1mu1cb4lmv"
-  folder_id = "b1gsk3plrk6l86to7geb"
-  zone      = "ru-central1-b"
-}
+* [private.auto.tfvars](src/pro-one-infra/init/private.auto.tfvars) - переменные
+* [provider.tf](src/pro-one-infra/init/provider.tf) - провайдер
+* [s3-backet.tf_](src/pro-one-infra/init/s3-backet.tf_) - описание бекенда s3
+* [s3.tf](src/pro-one-infra/init/s3.tf) - статические ключи для бакета
+* [sa-storage-admin.tf](src/pro-one-infra/init/sa-storage-admin.tf) - название бакета
+* [variables.tf](src/pro-one-infra/init/variables.tf) - описание переменных
+* [s3_destroy.sh](src/pro-one-infra/init/s3_destroy.sh) - sh файл с terraform destroy
+* [s3_install.sh](src/pro-one-infra/init/s3_install.sh) - sh файл с terraform init и apply
+* [s3_install-state.sh](src/pro-one-infra/init/s3_install-state.sh) - добавление бекенда для хранения terraform state
 
-resource "yandex_iam_service_account" "sa" {
-  name = "sa-key-terra"
-}
+* История в картинках:
+  * Сначала было ничего
+  ![](img/yandex-cloud-s3-01.png)
 
-// Назначение роли сервисному аккаунту
-resource "yandex_resourcemanager_folder_iam_member" "sa-admin" {
-  folder_id = "b1gsk3plrk6l86to7geb"
-  role      = "storage.admin"
-  member    = "serviceAccount:${yandex_iam_service_account.sa.id}"
-}
+  ![](img/terraform-01.png)
 
-// Создание статического ключа доступа
-resource "yandex_iam_service_account_static_access_key" "sa-static-key" {
-  service_account_id = yandex_iam_service_account.sa.id
-  description        = "static access key for object storage"
-}
+  * Запустили создание и появился бакет
+  ![](img/terraform-02.png)
+  
+  ![](img/terraform-03.png)
 
-// Создание бакета с использованием ключа
-resource "yandex_storage_bucket" "test" {
-  access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
-  secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
-  bucket     = "s3-dev-one"
-}
-  ```
+  ![](img/yandex-cloud-s3-02.png)
 
+  * Проверили, что бакет удаляется и появляется
+  ![](img/terraform-04.png) 
+  
+  ![](img/yandex-cloud-s3-03.png)
+
+  ![](img/terraform-05.png) 
+
+  ![](img/terraform-06.png) 
+
+  ![](img/yandex-cloud-s3-04.png)
+
+  * Добавили бекенд для хранилища и появилось состояние
+  ![](img/terraform-07.png) 
+
+  ![](img/yandex-cloud-s3-05.png)
+
+
+* **Материалы по теме**
   [Документация по созданию бакета](https://yandex.cloud/ru/docs/storage/operations/buckets/create)
-</details>
-
-<details>
-
-  <summary>Стартуем создание бакета</summary>
-
-
-```
-nano backend.tf 
-
-terraform init
-terraform plan
-terraform apply
-```
-![terraform plan](terraform-bucket-init.png)
-
-![terraform plan](terraform-bucket-plan.png)
-
-</details>
-
-<details>
-  <summary>Добавляем backend для terraform</summary>
-
-```
-nano backend-s3.tf 
-```
-
-```
-terraform {
-  backend "s3" {
-    endpoints = {
-      s3 = "https://storage.yandexcloud.net"
-    }
-    bucket = "s3-dev-one"
-    region = "ru-central1"
-    key    = "state/terraform.tfstate"
-
-    skip_region_validation      = true
-    skip_credentials_validation = true
-    skip_requesting_account_id  = true # необходимая опция при описании бэкенда для Terraform версии 1.6.1 и старше.
-    skip_s3_checksum            = true # необходимая опция при описании бэкенда для Terraform версии 1.6.3 и старше.
-
-  }
-}
-```
-
-```
-terraform init -upgrade -reconfigure -backend-config="access_key=$ACCESS_KEY" -backend-config="secret_key=$SECRET_KEY"
-```
-
-![terraform plan](terraform-bucket-init2.png)
-
-![terraform plan](terraform-bucket-plan2.png)
-
-NB: В случае проблем стоит проверить роли сервисного аккаунта
-
-[Загрузка состояний Terraform в Yandex Object Storage](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-state-storage)
+  [Документация по созданию приватного бакета от Hashicorp](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/storage_bucket)
+  [Документация по s3 от HashiCorp](https://www.terraform.io/docs/language/settings/backends/s3.html)
+  [Деплоим Yandex Cloud с помощью Terraform и GitLab](https://www.youtube.com/watch?v=U58zSIvgyDI)
+  [Загрузка состояний Terraform в Yandex Object Storage](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-state-storage)
+  [Terraform: от незнания к best practices](https://habr.com/ru/companies/nixys/articles/721404/)
 </details>
 
 
-![yandex cloud state](yandex-cloud-s3-01.png)
 
-![yandex cloud state](yandex-cloud-s3-02.png)
-
-![yandex cloud state](yandex-cloud-s3-03.png)
-
-
-
-### Создание Kubernetes кластера
-
-<details>
-  <summary>Example</summary>
-
-  ```
-  long console output here
-  ```
-</details>
-
-### Создание тестового приложения
-
-<details>
-  <summary>Example</summary>
-
-  ```
-  long console output here
-  ```
-</details>
-
-### Подготовка cистемы мониторинга и деплой приложения
-
-<details>
-  <summary>Example</summary>
-
-  ```
-  long console output here
-  ```
-</details>
-
-### Установка и настройка CI/CD
-
-<details>
-  <summary>Example</summary>
-
-  ```
-  long console output here
-  ```
-</details>
-
-### Итоги выполнения работы
