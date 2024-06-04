@@ -126,6 +126,31 @@ provider_installation {
 
 ![сервер Gitlab](img/gitlab-srv.png)
 
+<details>
+  <summary>На случай проблем с докером</summary>
+
+  ```
+   nano /etc/docker/daemon.json  
+  ```
+
+  ```
+  {
+  "registry-mirrors": [      
+          "https://dockerhub.timeweb.cloud",
+          "https://huecker.io"
+  ]
+  }
+  ```
+
+  При наличии домена и VPS в зазеркалье можно нехитрым образом сделать свой миррор, что более предпочтительно
+
+  * [_env](src/docker-mirror/_env) - переименовать в .env и указать свой домен (А запись нужно указать заранее, иначе сертификат сразу можно не получить!)
+  * [config.yml](src/docker-mirror/config.yml) - конфигурационный файл для registry
+  * [docker-compose.yml](src/docker-mirror/docker-compose.yml) - запускаем как обычно
+  * [traefik.yml](src/docker-mirror/traefik.yml) - доп. конфиг для Traefik
+  
+
+</details>
 
 <details>
   <summary>Запускаем Gitlab</summary>
@@ -340,15 +365,28 @@ name: sa-key
 
   ![](img/yandex-cloud-s3-05.png)
 
+</details>
 
-* **Материалы по теме**
+<details>
+  <summary>Создание VPC с подсетями в разных зонах доступности</summary>
+
+</details>
+
+
+<details>
+  <summary>Summary</summary>
+
+
+</details>
+
+<details>
+  <summary>Материалы по теме</summary>
+
   * [Документация по созданию бакета](https://yandex.cloud/ru/docs/storage/operations/buckets/create)
   * [Документация по созданию приватного бакета от Hashicorp](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/storage_bucket)
   * [Документация по s3 от HashiCorp](https://www.terraform.io/docs/language/settings/backends/s3.html)
   * [Деплоим Yandex Cloud с помощью Terraform и GitLab](https://www.youtube.com/watch?v=U58zSIvgyDI)
   * [Загрузка состояний Terraform в Yandex Object Storage](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-state-storage)
   * [Terraform: от незнания к best practices](https://habr.com/ru/companies/nixys/articles/721404/)
+
 </details>
-
-
-
