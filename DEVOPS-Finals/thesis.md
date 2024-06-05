@@ -431,15 +431,23 @@ name: sa-key
   * В начале снова ничего, кроме s3 и стейта
   ![](img/yandex-cloud-vpc-01.png)
 
-  * Запустили создание
+  * Запустили создание - вариант 1
   ![](img/yandex-cloud-vpc-02.png)
 
-  * Создалось:
+  * Запустили создание - вариант 2
+  ![](img/yandex-cloud-vpc-07.png)
+
+  * Создалось - вариант 1:
   ![](img/yandex-cloud-vpc-03.png)
 
   ![](img/yandex-cloud-vpc-04.png)
 
-  * Видео создания:
+  * Создалось - вариант 2:
+  ![](img/yandex-cloud-vpc-08.png)
+
+  ![](img/yandex-cloud-vpc-09.png)
+
+  * Видео создания (вариант 1):
   [https://youtu.be/8m-nbBQoqDI](https://youtu.be/8m-nbBQoqDI)
 
   * Видео удаления:
@@ -451,13 +459,15 @@ name: sa-key
   * И ничего кроме s3 со стейтом не осталось
   ![](img/yandex-cloud-vpc-06.png)
 
+  Виртуальные машины многократно создавались и пересоздавались для проверки работы манифестов и отсутствия при этом критичных ошибок.
+
   Материалы по теме:
   * [Метаданные виртуальной машины](https://yandex.cloud/ru/docs/compute/concepts/vm-metadata)
   * [Как создать виртуальную машину с доступом по паролю](https://yandex.cloud/ru/docs/troubleshooting/compute/how-to/create-password-protected-vm)
   * [Включить доступ по OS Login](https://yandex.cloud/ru/docs/organization/operations/os-login-access)
   * [Добавить SSH-ключ](https://yandex.cloud/ru/docs/organization/operations/add-ssh#tf_1)
   * [Платформы](https://yandex.cloud/ru/docs/compute/concepts/vm-platforms#standard-platforms)
-  * [TF Yandex](https://terraform-provider.yandexcloud.net/Resources/compute_instance)
+  * [TF Yandex - yandex_compute_instance](https://terraform-provider.yandexcloud.net/Resources/compute_instance)
 </details>
 
 
