@@ -326,15 +326,15 @@ name: sa-key
 
 Данные c исходниками в каталоге с [исходниками](src/pro-one-infra/init/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
 
-* [private.auto.tfvars](src/pro-one-infra/init/private.auto.tfvars) - переменные
-* [provider.tf](src/pro-one-infra/init/provider.tf) - провайдер
-* [s3-backet.tf_](src/pro-one-infra/init/s3-backet.tf_) - описание бекенда s3
-* [s3.tf](src/pro-one-infra/init/s3.tf) - статические ключи для бакета
-* [sa-storage-admin.tf](src/pro-one-infra/init/sa-storage-admin.tf) - название бакета
-* [variables.tf](src/pro-one-infra/init/variables.tf) - описание переменных
-* [s3_destroy.sh](src/pro-one-infra/init/s3_destroy.sh) - sh файл с terraform destroy
-* [s3_install.sh](src/pro-one-infra/init/s3_install.sh) - sh файл с terraform init и apply
-* [s3_install-state.sh](src/pro-one-infra/init/s3_install-state.sh) - добавление бекенда для хранения terraform state
+* [private.auto.tfvars](src/pro-one-infra-init/private.auto.tfvars) - переменные
+* [provider.tf](src/pro-one-infra-init/provider.tf) - провайдер
+* [s3-backet.tf_](src/pro-one-infra-init/s3-backet.tf_) - описание бекенда s3
+* [s3.tf](src/pro-one-infra-init/s3.tf) - статические ключи для бакета
+* [sa-storage-admin.tf](src/pro-one-infra-init/sa-storage-admin.tf) - название бакета
+* [variables.tf](src/pro-one-infra-init/variables.tf) - описание переменных
+* [s3_destroy.sh](src/pro-one-infra-init/s3_destroy.sh) - sh файл с terraform destroy
+* [s3_install.sh](src/pro-one-infra-init/s3_install.sh) - sh файл с terraform init и apply
+* [s3_install-state.sh](src/pro-one-infra-init/s3_install-state.sh) - добавление бекенда для хранения terraform state
 
 
 **История в картинках:**
@@ -387,21 +387,21 @@ name: sa-key
 
 Данные c исходниками в каталоге с [исходниками](src/pro-one-infra/init-test-vps/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
 
-* [private.auto.tfvars](src/pro-one-infra/init-test-vps/private.auto.tfvars) - переменные
-* [provider.tf](src/pro-one-infra/init-test-vps/provider.tf) - провайдер
-* [s3-backet.tf_](src/pro-one-infra/init-test-vps/s3-backet.tf) - описание бекенда s3
-* [s3.tf](src/pro-one-infra/init-test-vps/s3.tf) - статические ключи для бакета
-* [sa-storage-admin.tf](src/pro-one-infra/init-test-vps/sa-storage-admin.tf) - название бакета
-* [variables.tf](src/pro-one-infra/init-test-vps/variables.tf) - описание переменных
-* [s3_destroy.sh](src/pro-one-infra/init-test-vps/s3_destroy.sh) - sh файл с terraform destroy
-* [s3_install.sh](src/pro-one-infra/init-test-vps/s3_install.sh) - sh файл с terraform init и apply
-* [s3_install-state.sh](src/pro-one-infra/init-test-vps/s3_install-state.sh) - добавление бекенда для хранения terraform state
+* [private.auto.tfvars](src/pro-one-infra-init-test-vps/private.auto.tfvars) - переменные
+* [provider.tf](src/pro-one-infra-init-test-vps/provider.tf) - провайдер
+* [s3-backet.tf_](src/pro-one-infra-init-test-vps/s3-backet.tf) - описание бекенда s3
+* [s3.tf](src/pro-one-infra-init-test-vps/s3.tf) - статические ключи для бакета
+* [sa-storage-admin.tf](src/pro-one-infra-init-test-vps/sa-storage-admin.tf) - название бакета
+* [variables.tf](src/pro-one-infra-init-test-vps/variables.tf) - описание переменных
+* [s3_destroy.sh](src/pro-one-infra-init-test-vps/s3_destroy.sh) - sh файл с terraform destroy
+* [s3_install.sh](src/pro-one-infra-init-test-vps/s3_install.sh) - sh файл с terraform init и apply
+* [s3_install-state.sh](src/pro-one-infra-init-test-vps/s3_install-state.sh) - добавление бекенда для хранения terraform state
 
 Кроме того добавляем некоторые дополнительные файлы:
-* [networks.tf](src/pro-one-infra/init-test-vps/networks.tf) - список сетей 
-* [output.tf](src/pro-one-infra/init-test-vps/output.tf) - вывод полученного
-* [secret.txt](src/pro-one-infra/init-test-vps/secret.txt) - мета-данные для передачи в виртуальные машины
-* [vpc.tf](src/pro-one-infra/init-test-vps/vpc.tf) - манифест для создания виртуальных машин
+* [networks.tf](src/pro-one-infra-init-test-vps/networks.tf) - список сетей 
+* [output.tf](src/pro-one-infra-init-test-vps/output.tf) - вывод полученного
+* [secret.txt](src/pro-one-infra-init-test-vps/secret.txt) - мета-данные для передачи в виртуальные машины
+* [vpc.tf](src/pro-one-infra-init-test-vps/vpc.tf) - манифест для создания виртуальных машин
 
 А также переименовали sh скрипты в vpc-s3_destroy.sh и vpc-s3_install.sh, но по сути там ничего не поменялось.
 
