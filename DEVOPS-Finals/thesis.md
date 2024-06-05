@@ -324,7 +324,7 @@ name: sa-key
 <details>
   <summary>Создаем манифесты и делаем s3 backend</summary>
 
-Данные c исходниками в каталоге с [исходниками](src/pro-one-infra/init/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
+Данные c исходниками в каталоге с [исходниками](src/pro-one-infra-init/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
 
 * [private.auto.tfvars](src/pro-one-infra-init/private.auto.tfvars) - переменные
 * [provider.tf](src/pro-one-infra-init/provider.tf) - провайдер
@@ -385,7 +385,7 @@ name: sa-key
 ![](img/yandex-cloud-zone.png)
 
 
-Данные c исходниками в каталоге с [исходниками](src/pro-one-infra/init-test-vps/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
+Данные c исходниками в каталоге с [исходниками](src/pro-one-infra-init-test-vps/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
 
 * [private.auto.tfvars](src/pro-one-infra-init-test-vps/private.auto.tfvars) - переменные
 * [provider.tf](src/pro-one-infra-init-test-vps/provider.tf) - провайдер
