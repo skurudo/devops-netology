@@ -457,5 +457,5 @@ name: sa-key
   * [Деплоим Yandex Cloud с помощью Terraform и GitLab](https://www.youtube.com/watch?v=U58zSIvgyDI)
   * [Загрузка состояний Terraform в Yandex Object Storage](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-state-storage)
   * [Terraform: от незнания к best practices](https://habr.com/ru/companies/nixys/articles/721404/)
-
 </details>
+
