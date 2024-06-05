@@ -407,7 +407,7 @@ name: sa-key
 
 **История в картинках:**
 
-  * В начале снова ничего, кроме стейта
+  * В начале снова ничего, кроме s3 и стейта
   ![](img/yandex-cloud-vpc-01.png)
 
   * Запустили создание
@@ -419,10 +419,10 @@ name: sa-key
   ![](img/yandex-cloud-vpc-04.png)
 
   * Видео создания:
-  ![](img/yandex-cloud-vpc.mp4)
+  [https://youtu.be/8m-nbBQoqDI](https://youtu.be/8m-nbBQoqDI)
 
   * Видео удаления:
-  ![](img/yandex-cloud-vpc-destroy.mp4)
+  [https://youtu.be/iJznXWd4vlY](https://youtu.be/iJznXWd4vlY)
 
   * Удаление:
   ![](img/yandex-cloud-vpc-05.png)
