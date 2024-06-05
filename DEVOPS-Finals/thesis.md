@@ -6,6 +6,7 @@
     - [Планирование и проработка этапов выполнения](#планирование-и-проработка-этапов-выполнения)
     - [Подготовка - Gitlab](#подготовка---gitlab)
     - [Создание облачной инфраструктуры](#создание-облачной-инфраструктуры)
+    - [Создание Kubernetes кластера](#создание-kubernetes-кластера)
 
 ---
 ## Цели:
@@ -237,6 +238,8 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 
 ### Создание облачной инфраструктуры
 
+Создание облачной инфраструкты проходит на базе Яндекс.Облако с использованием terraform. Работы проводились с рабочей машины с сервером Gitlab. 
+
 <details>
     <summary>yc - сервис-аккаунт и токен</summary>
 
@@ -376,21 +379,24 @@ name: sa-key
 
 Забегая вперед замечу, что создать прям во всех зонах доступности не вышло из-за квотирования. На аккаунте мне доступны только A и B зоны. Зона С скоро будет закрыта - https://cloud.yandex.ru/blog/posts/2023/08/new-availability-zone - потому пришлось создать три штуки, но в двух зонах.
 
+Вместо этого можно использовать зону D, т.е. у нас получаются машины в зонах A, B и D. Единственный нюанс, мы не сможем использовать виртуальные машины с  Intel Broadwell, но выбирать Intel Cascade Lake (standard-v2 / Intel® Xeon® Gold 6230) или Intel Ice Lake (standard-v3 / Intel® Xeon® Gold 6338).
+
 ![](img/terraform-08.png)
 
 ![](img/yandex-cloud-zone.png)
 
 
-Данные c исходниками в каталоге с [исходниками](src/pro-one-infra-init-test-vps/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
+Данные c исходниками в каталоге с [исходниками](src/pro-one-infra-init-test-vps/), [исходниками-2-с-зоной-D](src/pro-one-infra-init-test-vps2/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
 
+*Вариант 1*
 * [private.auto.tfvars](src/pro-one-infra-init-test-vps/private.auto.tfvars) - переменные
 * [provider.tf](src/pro-one-infra-init-test-vps/provider.tf) - провайдер
 * [s3-backet.tf_](src/pro-one-infra-init-test-vps/s3-backet.tf) - описание бекенда s3
 * [s3.tf](src/pro-one-infra-init-test-vps/s3.tf) - статические ключи для бакета
 * [sa-storage-admin.tf](src/pro-one-infra-init-test-vps/sa-storage-admin.tf) - название бакета
 * [variables.tf](src/pro-one-infra-init-test-vps/variables.tf) - описание переменных
-* [s3_destroy.sh](src/pro-one-infra-init-test-vps/s3_destroy.sh) - sh файл с terraform destroy
-* [s3_install.sh](src/pro-one-infra-init-test-vps/s3_install.sh) - sh файл с terraform init и apply
+* [vpc-s3_destroy.shh](src/pro-one-infra-init-test-vps/vpc-s3_destroy.sh) - sh файл с terraform destroy
+* [vpc-s3_install.sh](src/pro-one-infra-init-test-vps/vpc-s3_install.sh) - sh файл с terraform init и apply
 * [s3_install-state.sh](src/pro-one-infra-init-test-vps/s3_install-state.sh) - добавление бекенда для хранения terraform state
 
 Кроме того добавляем некоторые дополнительные файлы:
@@ -400,6 +406,25 @@ name: sa-key
 * [vpc.tf](src/pro-one-infra-init-test-vps/vpc.tf) - манифест для создания виртуальных машин
 
 А также переименовали sh скрипты в vpc-s3_destroy.sh и vpc-s3_install.sh, но по сути там ничего не поменялось.
+
+*Вариант 2*
+
+* [private.auto.tfvars](src/pro-one-infra-init-test-vps2/private.auto.tfvars) - переменные
+* [provider.tf](src/pro-one-infra-init-test-vps2/provider.tf) - провайдер
+* [s3-backet.tf_](src/pro-one-infra-init-test-vps2/s3-backet.tf) - описание бекенда s3
+* [s3.tf](src/pro-one-infra-init-test-vps2/s3.tf) - статические ключи для бакета
+* [sa-storage-admin.tf](src/pro-one-infra-init-test-vps2/sa-storage-admin.tf) - название бакета
+* [variables.tf](src/pro-one-infra-init-test-vps2/variables.tf) - описание переменных
+* [vpc-s3_destroy.shh](src/pro-one-infra-init-test-vps2/vpc-s3_destroy.sh) - sh файл с terraform destroy
+* [vpc-s3_install.sh](src/pro-one-infra-init-test-vps2/vpc-s3_install.sh) - sh файл с terraform init и apply
+* [s3_install-state.sh](src/pro-one-infra-init-test-vps2/s3_install-state.sh) - добавление бекенда для хранения terraform state
+
+Кроме того добавляем некоторые дополнительные файлы:
+* [networks.tf](src/pro-one-infra-init-test-vps2/networks.tf) - список сетей - сеть в зоне ru-central1-d
+* [output.tf](src/pro-one-infra-init-test-vps2/output.tf) - вывод полученного
+* [secret.txt](src/pro-one-infra-init-test-vps2/secret.txt) - мета-данные для передачи в виртуальные машины
+* [vpc.tf](src/pro-one-infra-init-test-vps2/vpc.tf) - манифест для создания виртуальных машин - изменение в выборе платформы на одной из машин
+
 
 **История в картинках:**
 
@@ -431,6 +456,8 @@ name: sa-key
   * [Как создать виртуальную машину с доступом по паролю](https://yandex.cloud/ru/docs/troubleshooting/compute/how-to/create-password-protected-vm)
   * [Включить доступ по OS Login](https://yandex.cloud/ru/docs/organization/operations/os-login-access)
   * [Добавить SSH-ключ](https://yandex.cloud/ru/docs/organization/operations/add-ssh#tf_1)
+  * [Платформы](https://yandex.cloud/ru/docs/compute/concepts/vm-platforms#standard-platforms)
+  * [TF Yandex](https://terraform-provider.yandexcloud.net/Resources/compute_instance)
 </details>
 
 
@@ -455,3 +482,40 @@ name: sa-key
   * [Terraform: от незнания к best practices](https://habr.com/ru/companies/nixys/articles/721404/)
 </details>
 
+
+### Создание Kubernetes кластера
+
+Создание кластера Kubernetes проходит на базе Яндекс.Облако с использованием terraform. Работы проводились с рабочей машины с сервером Gitlab. 
+
+<details>
+  <summary>Манифесты и конфигурация</summary>
+
+  ```
+  long console output here
+  ```
+</details>
+
+<details>
+  <summary>Проверка создания</summary>
+
+  ```
+  long console output here
+  ```
+</details>
+
+<details>
+  <summary>Summary</summary>
+
+  ```
+  long console output here
+  ```
+</details>
+
+<details>
+  <summary>Материалы по теме</summary>
+
+  * [HashiCorp - yandex_kubernetes_cluster](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_cluster)
+  * [HashiCorp - yandex_kubernetes_node_group](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_node_group)
+  * [TF Yandex - yandex_kubernetes_cluster](https://terraform-provider.yandexcloud.net/Resources/kubernetes_cluster)
+  * [TF Yandex - yandex_kubernetes_node_group](https://terraform-provider.yandexcloud.net/Resources/kubernetes_node_group)
+</details>
