@@ -50,7 +50,7 @@
 В принципе не так важно, где именно мы разместим машину, главное - доступность и возможность дополнительных настроек. Gitlab мы выбрали за возможность использования CI/CD и раннеров прямо на борту. Также крайне и крайне желательно на старте иметь возможность дать Gitlab нормальные сертификаты, в противном случае можно довольно знатно пройтись по граблям. 
 
 <details>
-  <summary>Подготовка операционной системы: softs, docker, helm, terraform, yc</summary>
+  <summary>**Подготовка операционной системы: softs, docker, helm, terraform, yc**</summary>
 
   * **Сменим хостнейм**
   ```  hostnamectl set-hostname lab.galkin.work ```
@@ -153,7 +153,7 @@ provider_installation {
 </details>
 
 <details>
-  <summary>Запускаем Gitlab</summary>
+  <summary>**Запускаем Gitlab**</summary>
 
 * **Подготовим docker-compose для Gitlab**
 
@@ -238,18 +238,14 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 ### Создание облачной инфраструктуры
 
 <details>
-  <summary>yc - инициализация</summary>
+    <summary>**yc - сервис-аккаунт и токен**</summary>
 
   ```
   yc init
 
   получаем токен и проводим первоначальную настройку
   ```
-</details>
-
-<details>
-  <summary>yc - сервис-аккаунт и токен</summary>
-
+  
   Создаем сервисный аккаунт и получаем токен 
 
   ```
@@ -283,7 +279,7 @@ name: sa-key
 </details>
 
 <details>
-  <summary>Уточняем ID облака и каталога для указания в манифесте</summary>
+  <summary>**Уточняем ID облака и каталога для указания в манифесте**</summary>
 
   ```
   root@lab:/opt/dev-one# yc resource-manager cloud list
@@ -322,7 +318,7 @@ name: sa-key
 </details>
 
 <details>
-  <summary>Создаем манифесты и делаем s3 backend</summary>
+  <summary>**Создаем манифесты и делаем s3 backend**</summary>
 
 Данные c исходниками в каталоге с [исходниками](src/pro-one-infra-init/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
 
@@ -376,7 +372,7 @@ name: sa-key
 </details>
 
 <details>
-  <summary>Создание VPC с подсетями в разных зонах доступности</summary>
+  <summary>**Создание VPC с подсетями в разных зонах доступности**</summary>
 
 Забегая вперед замечу, что создать прям во всех зонах доступности не вышло из-за квотирования. На аккаунте мне доступны только A и B зоны. Зона С скоро будет закрыта - https://cloud.yandex.ru/blog/posts/2023/08/new-availability-zone - потому пришлось создать три штуки, но в двух зонах.
 
@@ -439,7 +435,7 @@ name: sa-key
 
 
 <details>
-  <summary>Summary</summary>
+  <summary>**Summary**</summary>
 
 В скромной работе конечно не совсем полная автоматизация, хотя по заданию было свести все к минимуму, но пока моих знаний и умений недостаточно. В идеальной картинке мира было бы здорово когда-нибудь добиться более автоматизированной истории, скорее всего, при помощи модулей от Яндекса:
 
@@ -449,7 +445,7 @@ name: sa-key
 </details>
 
 <details>
-  <summary>Материалы по теме</summary>
+  <summary>**Материалы по теме**</summary>
 
   * [Документация по созданию бакета](https://yandex.cloud/ru/docs/storage/operations/buckets/create)
   * [Документация по созданию приватного бакета от Hashicorp](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/storage_bucket)
