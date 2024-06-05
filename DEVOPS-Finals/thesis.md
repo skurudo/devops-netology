@@ -52,6 +52,8 @@
 <details>
   <summary>Подготовка операционной системы: softs, docker, helm, terraform, yc</summary>
 
+![сервер Gitlab](img/gitlab-srv.png)
+
   * **Сменим хостнейм**
   ```  hostnamectl set-hostname lab.galkin.work ```
 
@@ -124,7 +126,7 @@ provider_installation {
   ```  
 </details>
 
-![сервер Gitlab](img/gitlab-srv.png)
+
 
 <details>
   <summary>На случай проблем с докером</summary>
@@ -149,7 +151,6 @@ provider_installation {
   * [docker-compose.yml](src/docker-mirror/docker-compose.yml) - запускаем как обычно
   * [traefik.yml](src/docker-mirror/traefik.yml) - доп. конфиг для Traefik
   
-
 </details>
 
 <details>
@@ -219,8 +220,6 @@ sudo gitlab-runner start
 gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy5f2HfR
 ```
 
-</details>
-
 ![сервер Gitlab](img/gitlab-face.png)
 
 ![сервер Gitlab](img/gitlab-face2.png)
@@ -234,6 +233,7 @@ gitlab-runner register --url https://lab.galkin.work --token glrt-B9bR4BpxzWPyDy
 - **monitor** - мониторинг
 
 ![сервер Gitlab](img/gitlab-face3.png)
+</details>
 
 ### Создание облачной инфраструктуры
 
