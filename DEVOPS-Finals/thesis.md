@@ -378,11 +378,63 @@ name: sa-key
 <details>
   <summary>Создание VPC с подсетями в разных зонах доступности</summary>
 
-...уже почти готово
+Забегая вперед замечу, что создать прям во всех зонах доступности не вышло из-за квотирования. На аккаунте мне доступны только A и B зоны. Зона С скоро будет закрыта - https://cloud.yandex.ru/blog/posts/2023/08/new-availability-zone - потому пришлось создать три штуки, но в двух зонах.
 
-...видео без регистрации и смс
+![](img/terraform-08.png)
+
+![](img/yandex-cloud-zone.png)
 
 
+Данные c исходниками в каталоге с [исходниками](src/pro-one-infra/init-test-vps/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/infra) (пока он еще жив)
+
+* [private.auto.tfvars](src/pro-one-infra/init-test-vps/private.auto.tfvars) - переменные
+* [provider.tf](src/pro-one-infra/init-test-vps/provider.tf) - провайдер
+* [s3-backet.tf_](src/pro-one-infra/init-test-vps/s3-backet.tf) - описание бекенда s3
+* [s3.tf](src/pro-one-infra/init-test-vps/s3.tf) - статические ключи для бакета
+* [sa-storage-admin.tf](src/pro-one-infra/init-test-vps/sa-storage-admin.tf) - название бакета
+* [variables.tf](src/pro-one-infra/init-test-vps/variables.tf) - описание переменных
+* [s3_destroy.sh](src/pro-one-infra/init-test-vps/s3_destroy.sh) - sh файл с terraform destroy
+* [s3_install.sh](src/pro-one-infra/init-test-vps/s3_install.sh) - sh файл с terraform init и apply
+* [s3_install-state.sh](src/pro-one-infra/init-test-vps/s3_install-state.sh) - добавление бекенда для хранения terraform state
+
+Кроме того добавляем некоторые дополнительные файлы:
+* [networks.tf](src/pro-one-infra/init-test-vps/networks.tf) - список сетей 
+* [output.tf](src/pro-one-infra/init-test-vps/output.tf) - вывод полученного
+* [secret.txt](src/pro-one-infra/init-test-vps/secret.txt) - мета-данные для передачи в виртуальные машины
+* [vpc.tf](src/pro-one-infra/init-test-vps/vpc.tf) - манифест для создания виртуальных машин
+
+А также переименовали sh скрипты в vpc-s3_destroy.sh и vpc-s3_install.sh, но по сути там ничего не поменялось.
+
+**История в картинках:**
+
+  * В начале снова ничего, кроме стейта
+  ![](img/yandex-cloud-vpc-01.png)
+
+  * Запустили создание
+  ![](img/yandex-cloud-vpc-02.png)
+
+  * Создалось:
+  ![](img/yandex-cloud-vpc-03.png)
+
+  ![](img/yandex-cloud-vpc-04.png)
+
+  * Видео создания:
+  ![](img/yandex-cloud-vpc.mp4)
+
+  * Видео удаления:
+  ![](img/yandex-cloud-vpc-destroy.mp4)
+
+  * Удаление:
+  ![](img/yandex-cloud-vpc-05.png)
+  
+  * И ничего кроме s3 со стейтом не осталось
+  ![](img/yandex-cloud-vpc-06.png)
+
+  Материалы по теме:
+  * [Метаданные виртуальной машины](https://yandex.cloud/ru/docs/compute/concepts/vm-metadata)
+  * [Как создать виртуальную машину с доступом по паролю](https://yandex.cloud/ru/docs/troubleshooting/compute/how-to/create-password-protected-vm)
+  * [Включить доступ по OS Login](https://yandex.cloud/ru/docs/organization/operations/os-login-access)
+  * [Добавить SSH-ключ](https://yandex.cloud/ru/docs/organization/operations/add-ssh#tf_1)
 </details>
 
 
@@ -392,7 +444,7 @@ name: sa-key
 В скромной работе конечно не совсем полная автоматизация, хотя по заданию было свести все к минимуму, но пока моих знаний и умений недостаточно. В идеальной картинке мира было бы здорово когда-нибудь добиться более автоматизированной истории, скорее всего, при помощи модулей от Яндекса:
 
   * Автоматическое создание дополнительных служебных учеток средствами terraform. На мой взгляд использование одной для всего, безусловно, удобнее, но идеально, когда для каждого "ресурса" у нас свои креды и они строго ограничены в рамках своих прав. С точки зрения отладки это то еще приключение, но с точки зрения безопасности - более надежное решение.
-  * Для хранения секретов также идеально было бы использовать Vault от HashiCorp в связке с Terraform
+  * Для хранения секретов также идеально было бы использовать Vault от HashiCorp в связке с Terraform.
   * Не хватает автоматизации миграции state terraform при хранении его в облачной инфраструктуре. По заданию мы храним его в s3, но это хранилище создает и потенциально пытается убить тот же terraform. Да, у него не получается, но это как-то не очень здорово выглядит. Т.е. тут более идеальной наверное историей было бы мигрирование state в локальный при убийстве всех ресурсов (в том числе очистка бакета) и переходе обратно. Но скорее всего все это оверкил, и state было бы логичнее хранить в Gitlab.
 </details>
 
