@@ -518,6 +518,8 @@ name: sa-key
 <details>
   <summary>Манифесты и конфигурация</summary>
 
+Данные c исходниками в каталоге с [исходниками](src/pro-one-infra-k8s) или на [gitlab](https://lab.galkin.work/dev/infra/-/tree/main/k8s) (пока он еще жив)
+
 * [private.auto.tfvars](src/pro-one-infra-k8s/private.auto.tfvars) - переменные
 * [provider.tf](src/pro-one-infra-k8s/provider.tf) - провайдер
 * [s3-backet.tf_](src/pro-one-infra-k8s/s3-backet.tf) - описание бекенда s3
@@ -618,10 +620,13 @@ kube-system   yc-disk-csi-node-v2-jg29x              6/6     Running   0        
 <details>
   <summary>Подготовка тестового приложения</summary>
 
-[Dockerfile](src/pro-one-app/Dockerfile) - докерфайл
-[index.html](src/pro-one-app/index.html) - статическая страничка
-[netology.jpg](src/pro-one-app/netology.jpg) - статическая картинка
-[nginx.conf](src/pro-one-app/nginx.conf) - файл конфигурации nginx
+  Данные c исходниками в каталоге с [исходниками](src/pro-one-app/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/app) (пока он еще жив)
+
+
+* [Dockerfile](src/pro-one-app/Dockerfile) - докерфайл
+* [index.html](src/pro-one-app/index.html) - статическая страничка
+* [netology.jpg](src/pro-one-app/netology.jpg) - статическая картинка
+* [nginx.conf](src/pro-one-app/nginx.conf) - файл конфигурации nginx
 </details>
 
 
