@@ -7,6 +7,7 @@
     - [Подготовка - Gitlab](#подготовка---gitlab)
     - [Создание облачной инфраструктуры](#создание-облачной-инфраструктуры)
     - [Создание Kubernetes кластера](#создание-kubernetes-кластера)
+    - [Создание тестового приложения](#создание-тестового-приложения)
 
 ---
 ## Цели:
@@ -329,7 +330,7 @@ name: sa-key
 * [provider.tf](src/pro-one-infra-init/provider.tf) - провайдер
 * [s3-backet.tf_](src/pro-one-infra-init/s3-backet.tf_) - описание бекенда s3
 * [s3.tf](src/pro-one-infra-init/s3.tf) - статические ключи для бакета
-* [sa-storage-admin.tf](src/pro-one-infra-init/sa-storage-admin.tf) - название бакета
+* [sa-storage-admin.tf](src/pro-one-infra-init/sa-storage-admin.tf) - сервис-аккаунт
 * [variables.tf](src/pro-one-infra-init/variables.tf) - описание переменных
 * [s3_destroy.sh](src/pro-one-infra-init/s3_destroy.sh) - sh файл с terraform destroy
 * [s3_install.sh](src/pro-one-infra-init/s3_install.sh) - sh файл с terraform init и apply
@@ -393,7 +394,7 @@ name: sa-key
 * [provider.tf](src/pro-one-infra-init-test-vps/provider.tf) - провайдер
 * [s3-backet.tf_](src/pro-one-infra-init-test-vps/s3-backet.tf) - описание бекенда s3
 * [s3.tf](src/pro-one-infra-init-test-vps/s3.tf) - статические ключи для бакета
-* [sa-storage-admin.tf](src/pro-one-infra-init-test-vps/sa-storage-admin.tf) - название бакета
+* [sa-storage-admin.tf](src/pro-one-infra-init-test-vps/sa-storage-admin.tf) - сервис-аккаунт
 * [variables.tf](src/pro-one-infra-init-test-vps/variables.tf) - описание переменных
 * [vpc-s3_destroy.shh](src/pro-one-infra-init-test-vps/vpc-s3_destroy.sh) - sh файл с terraform destroy
 * [vpc-s3_install.sh](src/pro-one-infra-init-test-vps/vpc-s3_install.sh) - sh файл с terraform init и apply
@@ -413,7 +414,7 @@ name: sa-key
 * [provider.tf](src/pro-one-infra-init-test-vps2/provider.tf) - провайдер
 * [s3-backet.tf_](src/pro-one-infra-init-test-vps2/s3-backet.tf) - описание бекенда s3
 * [s3.tf](src/pro-one-infra-init-test-vps2/s3.tf) - статические ключи для бакета
-* [sa-storage-admin.tf](src/pro-one-infra-init-test-vps2/sa-storage-admin.tf) - название бакета
+* [sa-storage-admin.tf](src/pro-one-infra-init-test-vps2/sa-storage-admin.tf) - сервис-аккаунт
 * [variables.tf](src/pro-one-infra-init-test-vps2/variables.tf) - описание переменных
 * [vpc-s3_destroy.shh](src/pro-one-infra-init-test-vps2/vpc-s3_destroy.sh) - sh файл с terraform destroy
 * [vpc-s3_install.sh](src/pro-one-infra-init-test-vps2/vpc-s3_install.sh) - sh файл с terraform init и apply
@@ -468,6 +469,7 @@ name: sa-key
   * [Добавить SSH-ключ](https://yandex.cloud/ru/docs/organization/operations/add-ssh#tf_1)
   * [Платформы](https://yandex.cloud/ru/docs/compute/concepts/vm-platforms#standard-platforms)
   * [TF Yandex - yandex_compute_instance](https://terraform-provider.yandexcloud.net/Resources/compute_instance)
+  * [Virtual Private Cloud (VPC) Terraform module for Yandex.Cloud](https://github.com/terraform-yc-modules/terraform-yc-vpc)
 </details>
 
 
@@ -495,30 +497,105 @@ name: sa-key
 
 ### Создание Kubernetes кластера
 
-Создание кластера Kubernetes проходит на базе Яндекс.Облако с использованием terraform. Работы проводились с рабочей машины с сервером Gitlab. 
+Создание кластера Kubernetes проходит на базе Яндекс.Облако с использованием terraform. Работы проводились с рабочей машины с сервером Gitlab. Для разворачивания кластера был выбран вариант с Managed service Kubernetes. По условиям задачи нужно получить региональный кластер
+
+<details>
+  <summary>Первый блин</summary>
+
+  На моменте тестирования отвалился ресурс terraform-mirror.yandexcloud.net с ошибкой
+
+  ```
+  upstream connect error or disconnect/reset before headers. reset reason: connection failure, transport failure reason: delayed connect error: 110 request-id: 3b5a2521-d490-4728-8081-1dba89e6eadc trace-id: -
+  ```
+
+  ![](img/yandex-terraform-fail-01.png)
+
+  Пришлось переключиться на OpenTofu. Здесь и далее будет представлен именно он. Отличий в синтаксисе манифестов, командах и так далее нет, поэтому вполне можно использовать и его, как анти-санкционную замену terraform.
+
+  ![](img/yandex-terraform-fail-02.png)
+</details>
 
 <details>
   <summary>Манифесты и конфигурация</summary>
 
-  ```
-  long console output here
-  ```
+* [private.auto.tfvars](src/pro-one-infra-k8s/private.auto.tfvars) - переменные
+* [provider.tf](src/pro-one-infra-k8s/provider.tf) - провайдер
+* [s3-backet.tf_](src/pro-one-infra-k8s/s3-backet.tf) - описание бекенда s3
+* [s3.tf](src/pro-one-infra-k8s/s3.tf) - статические ключи для бакета
+* [sa-storage-admin.tf](src/pro-one-infra-k8s/sa-storage-admin.tf) - сервис-аккаунт, изменения для k-admin для k8s
+* [variables.tf](src/pro-one-infra-k8s/variables.tf) - описание переменных
+* [k8s-s3_destroy.shh](src/pro-one-infra-k8s/vpc-s3_destroy.sh) - sh файл с terraform destroy
+* [k8s-s3_install.sh](src/pro-one-infra-k8s/vpc-s3_install.sh) - sh файл с terraform init и apply
+* [s3_install-state.sh](src/pro-one-infra-k8s/s3_install-state.sh) - добавление бекенда для хранения terraform state
+
+* [id_rsa.pub](src/pro-one-infra-k8s/id_rsa.pub) - ключик для добавления к нодам кластера 
+* [k8s-cluster.tf](src/pro-one-infra-k8s/k8s-cluster.tf) - описание кластера
+* [k8s-kms.tf](src/pro-one-infra-k8s/k8s-kms.tf) - описание kms
+* [k8s-networks.tf](src/pro-one-infra-k8s/k8s-networks.tf) - описание подсетей
+* [k8s-nodes.tf](src/pro-one-infra-k8s/k8s-nodes.tf) - описание нод кластера
+
+Из прошлого задания нам не потребуются файлы [networks.tf](networks.tf_), [output.tf](output.tf)_, [secret.txt](secret.txt), [vpc.tf](vpc.tf_) - так, как мы используем managed-кластер
+
+Самое интересное - получение конфигурации от кластера и возможность иметь свежий kube-конфиг. Сделали через local-exec и yc.
+
+```
+output "k8s_cluster_id" {
+  value = yandex_kubernetes_cluster.k8s-regional.id
+  description = "ID of created cluster"
+}
+
+resource "null_resource" "k8s_cluster_id" {
+provisioner "local-exec" {
+    command = "rm -r ~/.kube && mkdir -p ~/.kube && yc managed-kubernetes cluster get-credentials ${yandex_kubernetes_cluster.k8s-regional.id} --external"
+ }
+}
+```
+
+
 </details>
 
 <details>
   <summary>Проверка создания</summary>
 
-  ```
-  long console output here
-  ```
+  ![yandex-cloud-k8s-01](img/yandex-cloud-k8s-01.png)
+
+  ![yandex-cloud-k8s-02](img/yandex-cloud-k8s-02.png)
+
+  ![yandex-cloud-k8s-03](img/yandex-cloud-k8s-03.png)
+
+  ![yandex-cloud-k8s-04](img/yandex-cloud-k8s-04.png)
+
+  ![yandex-cloud-k8s-05](img/yandex-cloud-k8s-05.png)
+
+  [Видео-ролик](https://youtu.be/VZC2BRsoJ10)
+
 </details>
 
 <details>
   <summary>Summary</summary>
 
   ```
-  long console output here
+  # kubectl get pods --all-namespaces
+NAMESPACE     NAME                                   READY   STATUS    RESTARTS   AGE
+kube-system   coredns-5d4bf4fdc8-7hrbj               0/1     Running   0          3m29s
+kube-system   ip-masq-agent-26bmk                    1/1     Running   0          34s
+kube-system   ip-masq-agent-bb29c                    1/1     Running   0          21s
+kube-system   ip-masq-agent-j7f8h                    1/1     Running   0          23s
+kube-system   kube-dns-autoscaler-74d99dd8dc-dzzk5   1/1     Running   0          3m25s
+kube-system   kube-proxy-mgdd9                       1/1     Running   0          34s
+kube-system   kube-proxy-t4z6z                       1/1     Running   0          21s
+kube-system   kube-proxy-vwz5f                       1/1     Running   0          23s
+kube-system   metrics-server-5b8cd9f6b7-dpxf9        1/2     Running   0          3m24s
+kube-system   npd-v0.8.0-6fgkl                       1/1     Running   0          21s
+kube-system   npd-v0.8.0-6zc92                       1/1     Running   0          34s
+kube-system   npd-v0.8.0-mxtc2                       1/1     Running   0          24s
+kube-system   yc-disk-csi-node-v2-7tqgf              6/6     Running   0          21s
+kube-system   yc-disk-csi-node-v2-bx2wc              6/6     Running   0          24s
+kube-system   yc-disk-csi-node-v2-jg29x              6/6     Running   0          34s
   ```
+
+![yandex-cloud-k8s-05](img/yandex-cloud-k8s-06.png)
+
 </details>
 
 <details>
@@ -528,4 +605,283 @@ name: sa-key
   * [HashiCorp - yandex_kubernetes_node_group](https://registry.terraform.io/providers/yandex-cloud/yandex/latest/docs/resources/kubernetes_node_group)
   * [TF Yandex - yandex_kubernetes_cluster](https://terraform-provider.yandexcloud.net/Resources/kubernetes_cluster)
   * [TF Yandex - yandex_kubernetes_node_group](https://terraform-provider.yandexcloud.net/Resources/kubernetes_node_group)
+  * [Обзор способов подключения](https://yandex.cloud/ru/docs/managed-kubernetes/operations/connect/)
+  * [Kubernetes Terraform Module for Yandex.Cloud](https://github.com/terraform-yc-modules/terraform-yc-kubernetes)
+  * [Extracting the KUBE_CONFIG for a DigitalOcean Kubernetes cluster from a Terraform .tfstate](https://dev.to/sshine/extracting-the-kubeconfig-for-a-digitalocean-kubernetes-cluster-from-a-terraform-tfstate-1o59)
+  * [Understanding local-exec provisioner in terraform](https://www.devopsschool.com/blog/understanding-local-exec-provisioner-in-terraform/)
+  * [How to Safely Pass Variables to Terraform local-exec Scripts](https://w3bward.hashnode.dev/how-to-safely-pass-variables-to-terraform-local-exec-scripts)
+  * [Автоматизация установки Kubernetes кластера с помощью Kubespray и Terraform в Yandex Cloud](https://habr.com/ru/articles/574514/)
+</details>
+
+### Создание тестового приложения
+
+<details>
+  <summary>Подготовка тестового приложения</summary>
+
+[Dockerfile](src/pro-one-app/Dockerfile) - докерфайл
+[index.html](src/pro-one-app/index.html) - статическая страничка
+[netology.jpg](src/pro-one-app/netology.jpg) - статическая картинка
+[nginx.conf](src/pro-one-app/nginx.conf) - файл конфигурации nginx
+</details>
+
+
+<details>
+  <summary>Тестирование и запуск</summary>
+
+Собираем:
+
+```
+root@lab:~/testapp# docker build -t protestapp --no-cache .
+[+] Building 2.2s (10/10) FINISHED                                                                                                                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                   0.1s
+ => => transferring dockerfile: 210B                                                                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/nginx:mainline-alpine                                                                                                                               0.5s
+ => [internal] load .dockerignore                                                                                                                                                                      0.1s
+ => => transferring context: 2B                                                                                                                                                                        0.0s
+ => CACHED [1/5] FROM docker.io/library/nginx:mainline-alpine@sha256:69f8c2c72671490607f52122be2af27d4fc09657ff57e42045801aa93d2090f7                                                                  0.0s
+ => [internal] load build context                                                                                                                                                                      0.1s
+ => => transferring context: 30.71kB                                                                                                                                                                   0.0s
+ => [2/5] RUN rm /etc/nginx/conf.d/*                                                                                                                                                                   0.4s
+ => [3/5] ADD nginx.conf /etc/nginx/conf.d/                                                                                                                                                            0.3s
+ => [4/5] ADD index.html /usr/share/nginx/html/                                                                                                                                                        0.1s
+ => [5/5] ADD netology.jpg /usr/share/nginx/html/                                                                                                                                                      0.2s
+ => exporting to image                                                                                                                                                                                 0.3s
+ => => exporting layers                                                                                                                                                                                0.3s
+ => => writing image sha256:55f45583125ea230e0f9e1745ed42eeae8a7a69054795d3a2f72c97e2ef56f6e                                                                                                           0.0s
+ => => naming to docker.io/library/protestapp                                                                                                                                                          0.0s
+```
+
+![docker-app-01](img/docker-app-01.png)
+
+Запускаем для проверки
+
+```
+root@lab:~/testapp# docker run -p 3000:80 protestapp
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: /etc/nginx/conf.d/default.conf is not a file or does not exist
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2024/06/10 16:01:24 [notice] 1#1: using the "epoll" event method
+2024/06/10 16:01:24 [notice] 1#1: nginx/1.27.0
+2024/06/10 16:01:24 [notice] 1#1: built by gcc 13.2.1 20231014 (Alpine 13.2.1_git20231014)
+2024/06/10 16:01:24 [notice] 1#1: OS: Linux 5.15.0-102-generic
+2024/06/10 16:01:24 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2024/06/10 16:01:24 [notice] 1#1: start worker processes
+2024/06/10 16:01:24 [notice] 1#1: start worker process 20
+2024/06/10 16:01:24 [notice] 1#1: start worker process 21
+2024/06/10 16:01:24 [notice] 1#1: start worker process 22
+2024/06/10 16:01:24 [notice] 1#1: start worker process 23
+```
+
+![docker-app-03](img/docker-app-03.png)
+
+![docker-app-02](img/docker-app-02.png)
+</details>
+
+
+<details>
+  <summary>Создание registry</summary>
+
+
+Добавляем registry c помощью манифеста [registry.tf](src/pro-one-infra-k8s/registry.tf), листиннг ниже
+
+```
+resource "yandex_container_registry" "my-registry" {
+  name = "pro-one-app"
+}
+
+resource "yandex_container_repository" "my-repository" {
+  name = "${yandex_container_registry.my-registry.id}/pro-one-app"
+}
+
+
+# Output data
+output "yandex_container_repository" {
+  value = yandex_container_registry.my-registry.id
+  description = "ID registry"
+}
+
+
+resource "null_resource" "yandex_container_repository" {
+provisioner "local-exec" {
+    command = "echo ${yandex_container_registry.my-registry.id} > registry-id"
+ }
+}
+```
+
+Данные о registry, а именно id получаем также с помощью output и local-exec
+
+[Видео создания](https://youtu.be/uMMFicdFmTM)
+
+![docker-registry-01](img/docker-app-01.png)
+
+![docker-registry-02](img/docker-app-02.png)
+
+![docker-registry-03](img/docker-app-03.png)
+</details>
+
+<details>
+  <summary>Сохранение в регистри</summary>
+
+Сначала нужно залогиниться... сделаем это с помощью нехитрого скрипта - [yc-registry-login.sh](src/yandex-registry/yc-registry-login.sh), который будет брать значение OAtoken'a и передавать докеру для логина. Данные про токен у нас есть в private.auto.tfvars
+
+```
+#!/bin/bash
+
+s="$(head -1 private.auto.tfvars)"
+s=${s#*'"'}; s=${s%'"'*}
+
+echo "Token for login:"
+echo "$s"
+
+
+echo "Login to Yandex Docker Registry"
+echo "$s" | docker login --username oauth --password-stdin cr.yandex
+```
+
+```
+6# ./yc-registry-login.sh
+Token for login:
+CENSORED
+Login to Yandex Docker Registry
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+```
+
+Теперь нужно запилить собрать и залить образ в регистри. id регистри мы получили с помощью терраформ (опентофу).
+
+Переименуем [yc-registry-login.sh](src/yandex-registry/yc-registry-login.sh) в [yc-registry-docker.sh](src/yandex-registry/yc-registry-docker.sh) и добавим туда чтение id регистри и билд-пуш туда.
+```
+echo "Registry ID"
+rid="$(head -1 registry-id)"
+echo "$rid"
+
+
+echo "-------"
+echo "Build and push app"
+cd ~/pro-one-app
+docker build . -t cr.yandex/$rid/pro-one-app:latest -f ~/pro-one-app/Dockerfile
+docker push cr.yandex/${rid}/pro-one-app:latest
+
+```
+
+В итоге получаем такой листинг в первом проходе:
+
+```
+# ./yc-registry-docker.sh
+Token for login:
+CENSORED
+Login to Yandex Docker Registry
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+Registry ID
+[+] Building 1.4s (10/10) FINISHED                                                                                                                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                   0.0s
+ => => transferring dockerfile: 210B                                                                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/nginx:mainline-alpine                                                                                                                               1.2s
+ => [internal] load .dockerignore                                                                                                                                                                      0.0s
+ => => transferring context: 2B                                                                                                                                                                        0.0s
+ => [1/5] FROM docker.io/library/nginx:mainline-alpine@sha256:69f8c2c72671490607f52122be2af27d4fc09657ff57e42045801aa93d2090f7                                                                         0.0s
+ => [internal] load build context                                                                                                                                                                      0.1s
+ => => transferring context: 30.71kB                                                                                                                                                                   0.0s
+ => CACHED [2/5] RUN rm /etc/nginx/conf.d/*                                                                                                                                                            0.0s
+ => CACHED [3/5] ADD nginx.conf /etc/nginx/conf.d/                                                                                                                                                     0.0s
+ => CACHED [4/5] ADD index.html /usr/share/nginx/html/                                                                                                                                                 0.0s
+ => CACHED [5/5] ADD netology.jpg /usr/share/nginx/html/                                                                                                                                               0.0s
+ => exporting to image                                                                                                                                                                                 0.0s
+ => => exporting layers                                                                                                                                                                                0.0s
+ => => writing image sha256:55f45583125ea230e0f9e1745ed42eeae8a7a69054795d3a2f72c97e2ef56f6e                                                                                                           0.0s
+ => => naming to cr.yandex/crp8jfk6aqukdh9003lb/pro-one-app:latest                                                                                                                                     0.0s
+The push refers to repository [cr.yandex/crp8jfk6aqukdh9003lb/pro-one-app]
+72b5fc078a9e: Pushed
+b54438062662: Pushed
+b280efc1ae41: Pushed
+16f15a5caaa8: Pushed
+9cba8117003a: Pushed
+b6d04dc5ecf7: Pushed
+d38ed9b519d2: Pushed
+3b4115e2edd1: Pushed
+8d720e2faad3: Pushed
+7b87df18a0ed: Pushed
+a05d3326ce5a: Pushed
+d4fc045c9e3a: Pushed
+latest: digest: sha256:eae5670009c17b8dd1c3cb997899528bacb8cb399b00430dd9cadb0ae5ba3afa size: 2819
+```
+
+Повторяем и видим, что все на месте:
+
+```
+# ./yc-registry-docker.sh
+Token for login:
+CENSORED
+Login to Yandex Docker Registry
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+Registry ID
+crp8jfk6aqukdh9003lb
+-------
+Build and push app
+[+] Building 0.7s (10/10) FINISHED                                                                                                                                                           docker:default
+ => [internal] load build definition from Dockerfile                                                                                                                                                   0.0s
+ => => transferring dockerfile: 210B                                                                                                                                                                   0.0s
+ => [internal] load metadata for docker.io/library/nginx:mainline-alpine                                                                                                                               0.5s
+ => [internal] load .dockerignore                                                                                                                                                                      0.0s
+ => => transferring context: 2B                                                                                                                                                                        0.0s
+ => [1/5] FROM docker.io/library/nginx:mainline-alpine@sha256:69f8c2c72671490607f52122be2af27d4fc09657ff57e42045801aa93d2090f7                                                                         0.0s
+ => [internal] load build context                                                                                                                                                                      0.0s
+ => => transferring context: 95B                                                                                                                                                                       0.0s
+ => CACHED [2/5] RUN rm /etc/nginx/conf.d/*                                                                                                                                                            0.0s
+ => CACHED [3/5] ADD nginx.conf /etc/nginx/conf.d/                                                                                                                                                     0.0s
+ => CACHED [4/5] ADD index.html /usr/share/nginx/html/                                                                                                                                                 0.0s
+ => CACHED [5/5] ADD netology.jpg /usr/share/nginx/html/                                                                                                                                               0.0s
+ => exporting to image                                                                                                                                                                                 0.0s
+ => => exporting layers                                                                                                                                                                                0.0s
+ => => writing image sha256:55f45583125ea230e0f9e1745ed42eeae8a7a69054795d3a2f72c97e2ef56f6e                                                                                                           0.0s
+ => => naming to cr.yandex/crp8jfk6aqukdh9003lb/pro-one-app:latest                                                                                                                                     0.0s
+The push refers to repository [cr.yandex/crp8jfk6aqukdh9003lb/pro-one-app]
+72b5fc078a9e: Layer already exists
+b54438062662: Layer already exists
+b280efc1ae41: Layer already exists
+16f15a5caaa8: Layer already exists
+9cba8117003a: Layer already exists
+b6d04dc5ecf7: Layer already exists
+d38ed9b519d2: Layer already exists
+3b4115e2edd1: Layer already exists
+8d720e2faad3: Layer already exists
+7b87df18a0ed: Layer already exists
+a05d3326ce5a: Layer already exists
+d4fc045c9e3a: Layer already exists
+latest: digest: sha256:eae5670009c17b8dd1c3cb997899528bacb8cb399b00430dd9cadb0ae5ba3afa size: 2819
+
+```
+
+Успешно создалось:
+![docker-registry-04](img/docker-app-04.png)
+
+![docker-registry-05](img/docker-app-05.png)
+
+Реестры, container registry, точно также, как и s3, не удаляются, если там что-то есть внутри. Т.е. для полного удаления нужно сначала зачистить содержимое и только потом удалять.
+
+</details>
+
+<details>
+  <summary>Материалы по теме</summary>
+
+  * [Запуск Docker-образа на виртуальной машине](https://yandex.cloud/ru/docs/container-registry/tutorials/run-docker-on-vm#oauth-token_1)
+  * [Справочник Terraform для Yandex Container Registry](https://yandex.cloud/ru/docs/container-registry/tf-ref)
+  * [TF Yandex - yandex_container_repository](https://terraform-provider.yandexcloud.net/Resources/container_repository)
+  * [Repository in Container Registry](https://yandex.cloud/en/docs/container-registry/concepts/repository)
 </details>
