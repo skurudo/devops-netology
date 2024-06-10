@@ -717,11 +717,11 @@ provisioner "local-exec" {
 
 [Видео создания](https://youtu.be/uMMFicdFmTM)
 
-![docker-registry-01](img/docker-app-01.png)
+![docker-registry-01](img/docker-registry-01.png)
 
-![docker-registry-02](img/docker-app-02.png)
+![docker-registry-02](img/docker-registry-02.png)
 
-![docker-registry-03](img/docker-app-03.png)
+![docker-registry-03](img/docker-registry-03.png)
 </details>
 
 <details>
