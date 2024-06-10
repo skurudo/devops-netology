@@ -620,7 +620,7 @@ kube-system   yc-disk-csi-node-v2-jg29x              6/6     Running   0        
 <details>
   <summary>Подготовка тестового приложения</summary>
 
-  Данные c исходниками в каталоге с [исходниками](src/pro-one-app/) или на [gitlab](https://lab.galkin.work/admin/projects/dev/app) (пока он еще жив)
+  Данные c исходниками в каталоге с [исходниками](src/pro-one-app) или на [gitlab](https://lab.galkin.work/admin/projects/dev/app) (пока он еще жив)
 
 
 * [Dockerfile](src/pro-one-app/Dockerfile) - докерфайл
