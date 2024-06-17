@@ -8,6 +8,15 @@
     - [Создание облачной инфраструктуры](#создание-облачной-инфраструктуры)
     - [Создание Kubernetes кластера](#создание-kubernetes-кластера)
     - [Создание тестового приложения](#создание-тестового-приложения)
+    - [Подготовка cистемы мониторинга и деплой приложения](#подготовка-cистемы-мониторинга-и-деплой-приложения)
+- [Добавлеям репо с ingress](#добавлеям-репо-с-ingress)
+- [Добавляем репо с набором](#добавляем-репо-с-набором)
+- [Обновляем репо](#обновляем-репо)
+- [Создаем namespace, где будет наше добро](#создаем-namespace-где-будет-наше-добро)
+- [Добавляем ингрес для кластера](#добавляем-ингрес-для-кластера)
+- [Настройки для нашего мониторинга](#настройки-для-нашего-мониторинга)
+- [Деплоим мониторинг](#деплоим-мониторинг)
+    - [Установка и настройка CI/CD](#установка-и-настройка-cicd)
 
 ---
 ## Цели:
@@ -497,7 +506,7 @@ name: sa-key
 
 ### Создание Kubernetes кластера
 
-Создание кластера Kubernetes проходит на базе Яндекс.Облако с использованием terraform. Работы проводились с рабочей машины с сервером Gitlab. Для разворачивания кластера был выбран вариант с Managed service Kubernetes. По условиям задачи нужно получить региональный кластер
+Создание кластера Kubernetes проходит на базе Яндекс.Облако с использованием terraform. Работы проводились с рабочей машины с сервером Gitlab. Для разворачивания кластера был выбран вариант с Managed service Kubernetes. От идеи использовать VPC и машины в разных зонах отказался потому, что буквально не так давно это самое делалось только в пределах Hyper-V в домашних заданиях. По условиям задачи нужно получить региональный кластер.
 
 <details>
   <summary>Первый блин</summary>
@@ -890,3 +899,357 @@ latest: digest: sha256:eae5670009c17b8dd1c3cb997899528bacb8cb399b00430dd9cadb0ae
   * [TF Yandex - yandex_container_repository](https://terraform-provider.yandexcloud.net/Resources/container_repository)
   * [Repository in Container Registry](https://yandex.cloud/en/docs/container-registry/concepts/repository)
 </details>
+
+### Подготовка cистемы мониторинга и деплой приложения
+
+<details>
+  <summary>Проверка кластера</summary>
+
+```
+# kubectl cluster-info
+
+Kubernetes control plane is running at https://158.160.129.35
+CoreDNS is running at https://158.160.129.35/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+```
+
+```
+# kubectl get pods --all-namespaces
+
+NAMESPACE     NAME                                   READY   STATUS    RESTARTS   AGE
+kube-system   coredns-5d4bf4fdc8-4wxsf               0/1     Running   0          4m4s
+kube-system   coredns-5d4bf4fdc8-r6p7q               0/1     Running   0          4s
+kube-system   ip-masq-agent-2klfm                    1/1     Running   0          28s
+kube-system   ip-masq-agent-6ffwt                    1/1     Running   0          38s
+kube-system   ip-masq-agent-dggqh                    1/1     Running   0          39s
+kube-system   kube-dns-autoscaler-74d99dd8dc-2gkls   1/1     Running   0          4m
+kube-system   kube-proxy-7bnwx                       1/1     Running   0          39s
+kube-system   kube-proxy-gjs7p                       1/1     Running   0          28s
+kube-system   kube-proxy-kzsvx                       1/1     Running   0          38s
+kube-system   metrics-server-5b8cd9f6b7-x5v29        1/2     Running   0          4m
+kube-system   npd-v0.8.0-9tpzc                       1/1     Running   0          40s
+kube-system   npd-v0.8.0-n9kz7                       1/1     Running   0          28s
+kube-system   npd-v0.8.0-wqtxv                       1/1     Running   0          38s
+kube-system   yc-disk-csi-node-v2-7d8d6              6/6     Running   0          28s
+kube-system   yc-disk-csi-node-v2-9qjfg              6/6     Running   0          40s
+kube-system   yc-disk-csi-node-v2-lhs5s              6/6     Running   0          38s
+```
+</details>
+
+<details>
+  <summary>Деплой мониторинга</summary>
+
+# Добавлеям репо с ingress
+
+```
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+```
+
+# Добавляем репо с набором
+
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
+```
+
+# Обновляем репо
+
+```
+helm repo update
+```
+
+# Создаем namespace, где будет наше добро
+```
+kubectl create namespace monitoring
+```
+
+# Добавляем ингрес для кластера
+helm install ingress-nginx/ingress-nginx --generate-name
+
+
+# Настройки для нашего мониторинга
+```
+prometheus:
+  enabled: true
+
+alertmanager:
+  enabled: true
+
+grafana:
+  enabled: true
+  adminPassword: "nil1faeP6eph"
+  persistence:
+    enabled: true
+    accessModes: ["ReadWriteOnce"]
+    size: 1Gi
+```
+
+# Деплоим мониторинг
+```
+helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f kube-prometheus-values.yaml
+```
+
+Настраиваем ингрес для Grafana:
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: monitoring
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: k8s.galkin.work
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kube-prometheus-stack-grafana
+                port:
+                  number: 80
+```
+
+```
+kubectl apply -f grafana-ingress.yaml
+```
+
+Проверяем, что у нас в ингресах:
+```
+kubectl get ingress -A
+
+NAMESPACE    NAME              CLASS   HOSTS             ADDRESS           PORTS   AGE
+monitoring   grafana-ingress   nginx   k8s.galkin.work   158.160.166.250   80      2m
+```
+
+Смотрим, что появилось еще:
+```
+# kubectl --namespace monitoring get pods
+
+NAME                                                        READY   STATUS    RESTARTS   AGE
+alertmanager-kube-prometheus-stack-alertmanager-0           2/2     Running   0          50s
+kube-prometheus-stack-grafana-554fcc4c86-krsfd              2/3     Running   0          63s
+kube-prometheus-stack-kube-state-metrics-7f6967956d-m557z   1/1     Running   0          63s
+kube-prometheus-stack-operator-79b45fdb47-fwmzc             1/1     Running   0          63s
+kube-prometheus-stack-prometheus-node-exporter-7nzcf        1/1     Running   0          63s
+kube-prometheus-stack-prometheus-node-exporter-8nh8s        1/1     Running   0          63s
+kube-prometheus-stack-prometheus-node-exporter-j2f8s        1/1     Running   0          63s
+prometheus-kube-prometheus-stack-prometheus-0               2/2     Running   0          50s
+```
+
+```
+# kubectl get pods --all-namespaces
+
+NAMESPACE     NAME                                                        READY   STATUS    RESTARTS   AGE
+default       ingress-nginx-1718636301-controller-7b6545bfd9-fdxh8        1/1     Running   0          2m22s
+kube-system   coredns-5d4bf4fdc8-4wxsf                                    1/1     Running   0          8m21s
+kube-system   coredns-5d4bf4fdc8-r6p7q                                    1/1     Running   0          4m21s
+kube-system   ip-masq-agent-2klfm                                         1/1     Running   0          4m45s
+kube-system   ip-masq-agent-6ffwt                                         1/1     Running   0          4m55s
+kube-system   ip-masq-agent-dggqh                                         1/1     Running   0          4m56s
+kube-system   kube-dns-autoscaler-74d99dd8dc-2gkls                        1/1     Running   0          8m17s
+kube-system   kube-proxy-7bnwx                                            1/1     Running   0          4m56s
+kube-system   kube-proxy-gjs7p                                            1/1     Running   0          4m45s
+kube-system   kube-proxy-kzsvx                                            1/1     Running   0          4m55s
+kube-system   metrics-server-6b5df79959-6v5jj                             2/2     Running   0          4m10s
+kube-system   npd-v0.8.0-9tpzc                                            1/1     Running   0          4m57s
+kube-system   npd-v0.8.0-n9kz7                                            1/1     Running   0          4m45s
+kube-system   npd-v0.8.0-wqtxv                                            1/1     Running   0          4m55s
+kube-system   yc-disk-csi-node-v2-7d8d6                                   6/6     Running   0          4m45s
+kube-system   yc-disk-csi-node-v2-9qjfg                                   6/6     Running   0          4m57s
+kube-system   yc-disk-csi-node-v2-lhs5s                                   6/6     Running   0          4m55s
+monitoring    alertmanager-kube-prometheus-stack-alertmanager-0           2/2     Running   0          70s
+monitoring    kube-prometheus-stack-grafana-554fcc4c86-krsfd              3/3     Running   0          83s
+monitoring    kube-prometheus-stack-kube-state-metrics-7f6967956d-m557z   1/1     Running   0          83s
+monitoring    kube-prometheus-stack-operator-79b45fdb47-fwmzc             1/1     Running   0          83s
+monitoring    kube-prometheus-stack-prometheus-node-exporter-7nzcf        1/1     Running   0          83s
+monitoring    kube-prometheus-stack-prometheus-node-exporter-8nh8s        1/1     Running   0          83s
+monitoring    kube-prometheus-stack-prometheus-node-exporter-j2f8s        1/1     Running   0          83s
+monitoring    prometheus-kube-prometheus-stack-prometheus-0               2/2     Running   0          70s
+```
+
+Заходим-проверяем:
+```
+login: admin
+password: nil1faeP6eph
+```
+
+PS: Момент про изменения А-записей опускаю, как очевидный.
+</details>
+
+<details>
+  <summary>Деплой приложения</summary>
+
+Подготовим файл для деплоя:
+
+```
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: default
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+  selector:
+    app: webapp
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pro-one-app-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: demo.galkin.work
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp-service
+                port:
+                  number: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  namespace: default
+  labels:
+    app: webapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      name: webapp
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: pro-one-app
+        image: cr.yandex/crp8jfk6aqukdh9003lb/pro-one-app:latest
+        ports:
+        - containerPort: 80
+```
+
+```
+# kubectl apply -f pro-one-app.yml
+
+service/webapp-service created
+ingress.networking.k8s.io/pro-one-app-ingress created
+deployment.apps/webapp-deployment created
+```
+
+```
+
+```
+
+
+Проверяем, что у нас в ингресах:
+```
+# kubectl get ingress -A
+
+NAMESPACE    NAME                  CLASS   HOSTS              ADDRESS           PORTS   AGE
+default      pro-one-app-ingress   nginx   demo.galkin.work   158.160.166.250   80      26s
+monitoring   grafana-ingress       nginx   k8s.galkin.work    158.160.166.250   80      4m18s
+```
+
+Смотрим, что появилось еще:
+```
+kubectl get pods --all-namespaces
+
+NAMESPACE     NAME                                                        READY   STATUS    RESTARTS   AGE
+default       ingress-nginx-1718636301-controller-7b6545bfd9-fdxh8        1/1     Running   0          6m7s
+default       webapp-deployment-5d655bc4b9-kjgr7                          1/1     Running   0          52s
+default       webapp-deployment-5d655bc4b9-wjfjg                          1/1     Running   0          52s
+default       webapp-deployment-5d655bc4b9-xw2vj                          1/1     Running   0          52s
+kube-system   coredns-5d4bf4fdc8-4wxsf                                    1/1     Running   0          12m
+kube-system   coredns-5d4bf4fdc8-r6p7q                                    1/1     Running   0          8m6s
+kube-system   ip-masq-agent-2klfm                                         1/1     Running   0          8m30s
+kube-system   ip-masq-agent-6ffwt                                         1/1     Running   0          8m40s
+kube-system   ip-masq-agent-dggqh                                         1/1     Running   0          8m41s
+kube-system   kube-dns-autoscaler-74d99dd8dc-2gkls                        1/1     Running   0          12m
+kube-system   kube-proxy-7bnwx                                            1/1     Running   0          8m41s
+kube-system   kube-proxy-gjs7p                                            1/1     Running   0          8m30s
+kube-system   kube-proxy-kzsvx                                            1/1     Running   0          8m40s
+kube-system   metrics-server-6b5df79959-6v5jj                             2/2     Running   0          7m55s
+kube-system   npd-v0.8.0-9tpzc                                            1/1     Running   0          8m42s
+kube-system   npd-v0.8.0-n9kz7                                            1/1     Running   0          8m30s
+kube-system   npd-v0.8.0-wqtxv                                            1/1     Running   0          8m40s
+kube-system   yc-disk-csi-node-v2-7d8d6                                   6/6     Running   0          8m30s
+kube-system   yc-disk-csi-node-v2-9qjfg                                   6/6     Running   0          8m42s
+kube-system   yc-disk-csi-node-v2-lhs5s                                   6/6     Running   0          8m40s
+monitoring    alertmanager-kube-prometheus-stack-alertmanager-0           2/2     Running   0          4m55s
+monitoring    kube-prometheus-stack-grafana-554fcc4c86-krsfd              3/3     Running   0          5m8s
+monitoring    kube-prometheus-stack-kube-state-metrics-7f6967956d-m557z   1/1     Running   0          5m8s
+monitoring    kube-prometheus-stack-operator-79b45fdb47-fwmzc             1/1     Running   0          5m8s
+monitoring    kube-prometheus-stack-prometheus-node-exporter-7nzcf        1/1     Running   0          5m8s
+monitoring    kube-prometheus-stack-prometheus-node-exporter-8nh8s        1/1     Running   0          5m8s
+monitoring    kube-prometheus-stack-prometheus-node-exporter-j2f8s        1/1     Running   0          5m8s
+monitoring    prometheus-kube-prometheus-stack-prometheus-0               2/2     Running   0          4m55s
+```
+
+Заходим-проверяем - [demo.galkin.work](http://demo.galkin.work):
+
+![demo](img/demo-app.png)
+
+PS: Момент про изменения А-записей опускаю, как очевидный.
+
+</details>
+
+<details>
+  <summary>Материалы по теме</summary>
+
+  * [Как задеплоить проект на Kubernetes в VK Cloud](https://cloud.vk.com/blog/proekt-na-kubernetes-v-mailru-cloud-solutions-chast-3)
+  * [Мониторинг в K8s с помощью Prometheus](https://selectel.ru/blog/tutorials/monitoring-in-k8s-with-prometheus/)
+  * [Установить Ingress и Ingress Controller](https://docs.selectel.ru/cloud/managed-kubernetes/networks/set-up-ingress/)
+  * [Как установить Prometheus и Grafana на Kubernetes с помощью Helm](https://itsecforu.ru/2021/04/12/%E2%98%B8%EF%B8%8F-%D0%BA%D0%B0%D0%BA-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-prometheus-%D0%B8-grafana-%D0%BD%D0%B0-kubernetes-%D1%81-%D0%BF%D0%BE%D0%BC%D0%BE%D1%89%D1%8C%D1%8E-h/)
+  * [Мониторинг кластера с помощью Prometheus и Grafana](https://yandex.cloud/ru/docs/managed-kubernetes/tutorials/prometheus-grafana-monitoring?utm_referrer=https%3A%2F%2Fyandex.ru%2F)
+  * [Start monitoring your Kubernetes cluster with Prometheus and Grafana](https://opensource.com/article/21/6/chaos-grafana-prometheus)
+  * [Запуск мониторинга k8s для ingress-nginx](https://www.devopsos.ru/blog/kubernetes-zapusk-prometheus-grafana-alertmanager-zapusk-exporter-dlya-ingress-nginx-controller)
+  * [Мониторинг с Prometheus в Kubernetes за 15 минут](https://habr.com/ru/companies/flant/articles/340728/)
+  * [Butname Charts](https://github.com/bitnami/charts/tree/main/bitnami)
+  * [End to end monitoring with the Prometheus Operator](https://www.youtube.com/watch?v=5Jr1v9mWnJc)
+  * [Using Helm to deploy to a kubernetes cluster pulling images from a private container registry](https://hamidshahid.blogspot.com/2018/07/using-helm-to-deploy-to-kubernetes.html) 
+</details>
+
+### Установка и настройка CI/CD
+
+<details>
+  <summary>Подготовим gitlab-ci</summary>
+</details>
+
+<details>
+  <summary>Подготовим helm chart</summary>
+</details>
+
+<details>
+  <summary>И еще немного подготовительных работ</summary>
+
+Используем CI/CD Variables для некоторых наших значений:
+* YA_CI_REGISTRY - ссылка на регистри (по сути она у нас константа в этой истории)
+* YA_CI_REGISTRY_KEY - ключ для доступа к регистри (все потому, что при деплое стоит использовать ключ, а не интерактивный вход)
+* YDX_KUBE_CONFIG_PROD - данные из  .kube/config, могут менять при пересоздании кластера
+
+Также не стоит забывать, что наш gitlab-runner может не знать про 
+
+</details>
+
+<details>
+  <summary>Материалы по теме</summary>
+</details>
+
+
+---
+
+Спасибо, что дочитали до этого места! :-)
