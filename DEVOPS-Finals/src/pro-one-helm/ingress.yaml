@@ -1,0 +1,47 @@
+---
+{{- if .Values.values_mapping.paths -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{.Release.Name}}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    {{- if eq .Values.environ "prod"}}
+    ingress.alb.yc.io/subnets: enpa3qo75egibfv8cks9
+    ingress.alb.yc.io/external-ipv4-address: auto
+    ingress.alb.yc.io/group-name: ingress
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    {{- end}}
+spec:
+  tls:
+  - hosts:
+    - {{.Values.fqdn}}
+    secretName: {{.Release.Name}}-secret
+  rules:
+    - host: {{.Values.fqdn}}
+      http:
+        paths:
+          {{- range .Values.values_mapping.paths}}
+          - path: {{.}}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{$.Release.Name}}
+                port:
+                  number: 80
+          {{- end}}
+    {{- if eq .Values.environ "prod"}}
+    - host: pro-one-app.galkin.work
+      http:
+        paths:
+          {{- range .Values.values_mapping.paths}}
+          - path: {{.}}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{$.Release.Name}}
+                port:
+                  number: 80
+          {{- end}}
+    {{- end}}
+{{- end -}}

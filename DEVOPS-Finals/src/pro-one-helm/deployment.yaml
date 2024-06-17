@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}
+  labels:
+    component: {{.Release.Name}}
+spec:
+  replicas: {{.Values.values_mapping.resources.replicas}}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      component: {{.Release.Name}}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        component: {{.Release.Name}}
+    spec:
+      {{- if eq .Values.environ "prod"}}
+      imagePullSecrets:
+      - name: regcred
+      {{- end}}
+      containers:
+        - name: {{.Release.Name}}
+          imagePullPolicy: Always
+          image: {{.Values.image_and_tag}}
+          resources:
+            requests:
+              memory: {{div .Values.values_mapping.resources.ram 2}}M
+              cpu: {{div .Values.values_mapping.resources.cpu 2}}
+            limits:
+              memory: {{.Values.values_mapping.resources.ram}}M
+              cpu: {{.Values.values_mapping.resources.cpu}}
+          env:
+            {{- range .Values.values_mapping.env}}
+            - name: {{.name}}
+              value: {{.value | quote}}
+            {{- end}}
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP

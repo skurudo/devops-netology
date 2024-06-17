@@ -1,0 +1,13 @@
+prometheus:
+  enabled: true
+
+alertmanager:
+  enabled: true
+
+grafana:
+  enabled: true
+  adminPassword: "nil1faeP6eph"
+  persistence:
+    enabled: true
+    accessModes: ["ReadWriteOnce"]
+    size: 1Gi

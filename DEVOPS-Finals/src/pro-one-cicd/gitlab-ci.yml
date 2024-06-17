@@ -1,0 +1,57 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  BUILD_IMAGE: ""
+  IMAGE_TAG: ""
+  RELEASE_NAME: pro-one-app
+  FQDN_PROD: pro-one-app.galkin.work
+
+.build:
+  tags:
+  - shell
+  stage: build
+  script:
+    - cat $YA_CI_REGISTRY_KEY|base64 -d|docker login --username json_key --password-stdin   cr.yandex
+    - touch .dockerignore && for i in $(echo ".git" "**/.git" ".gitlab-ci.yml" "Dockerfile" ); do grep -qxF ${i} .dockerignore || echo ${i} >> .dockerignore; done
+    - docker build -t "${BUILD_IMAGE}:${IMAGE_TAG}" -t "${BUILD_IMAGE}:latest" -f Dockerfile .
+    - docker push -a ${BUILD_IMAGE}
+    - docker rmi ${BUILD_IMAGE}:${IMAGE_TAG} ${BUILD_IMAGE}:latest
+    - echo "BUILD_IMAGE=$BUILD_IMAGE" > build.env
+    - echo "BUILD_IMAGE=$BUILD_IMAGE"
+    - echo "IMAGE_TAG=$IMAGE_TAG" >> build.env
+    - echo "IMAGE_TAG=$IMAGE_TAG"
+  artifacts:
+    when: on_success
+    reports:
+      dotenv: build.env
+
+build:prod:
+  variables:
+    CI_ENVIRONMENT: prod
+    BUILD_IMAGE: "${YA_CI_REGISTRY}/prooneapp-${CI_ENVIRONMENT}"
+    IMAGE_TAG: $CI_PIPELINE_IID
+    FQDN: $FQDN_PROD
+  extends: .build
+
+.deploy:
+  stage: deploy
+  tags:
+    - shell
+  before_script:
+    - export KUBECONFIG=$KUBECONFIG_FILE
+  script:
+    - helm --kubeconfig $KUBECONFIG upgrade --install --atomic --wait --timeout 3m --debug -f ./helm-chart/values.yaml --set environ=${CI_ENVIRONMENT_NAME} --set fqdn=${FQDN} --set image_and_tag=${IMAGE} --namespace=${NAMESPACE} --create-namespace ${RELEASE_NAME} ./helm-chart
+      
+deploy:prod:
+  variables:
+    NAMESPACE: $RELEASE_NAME-prod
+    KUBECONFIG_FILE: $YDX_KUBE_CONFIG_PROD
+    IMAGE: "${BUILD_IMAGE}:${IMAGE_TAG}"
+    FQDN: $FQDN_PROD
+  environment: prod
+  extends: .deploy
+  only:
+    refs:
+      - tags

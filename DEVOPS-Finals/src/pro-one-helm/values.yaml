@@ -1,0 +1,8 @@
+---
+values_mapping:
+  paths:
+    - /
+  resources:
+    cpu: 1
+    ram: 128
+    replicas: 3

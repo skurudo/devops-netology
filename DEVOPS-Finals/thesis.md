@@ -1150,10 +1150,6 @@ ingress.networking.k8s.io/pro-one-app-ingress created
 deployment.apps/webapp-deployment created
 ```
 
-```
-
-```
-
 
 Проверяем, что у нас в ингресах:
 ```
@@ -1210,6 +1206,16 @@ PS: Момент про изменения А-записей опускаю, к�
 <details>
   <summary>Материалы по теме</summary>
 
+Файлы для деплоя:
+* [grafana-ingress.yaml](src/pro-one-monitor/grafana-ingress.yaml) - ингрес для графаны
+* [kube-prometheus-values.yaml](src/pro-one-monitor/kube-prometheus-values.yaml) - доп. значения для стека
+* [pro-one-app.yml](src/pro-one-monitor/pro-one-app.yml) - тестовое приложение
+
+</details>
+
+<details>
+  <summary>Материалы по теме</summary>
+
   * [Как задеплоить проект на Kubernetes в VK Cloud](https://cloud.vk.com/blog/proekt-na-kubernetes-v-mailru-cloud-solutions-chast-3)
   * [Мониторинг в K8s с помощью Prometheus](https://selectel.ru/blog/tutorials/monitoring-in-k8s-with-prometheus/)
   * [Установить Ingress и Ingress Controller](https://docs.selectel.ru/cloud/managed-kubernetes/networks/set-up-ingress/)
@@ -1228,14 +1234,80 @@ PS: Момент про изменения А-записей опускаю, к�
 <details>
   <summary>Подготовим gitlab-ci</summary>
 
-Бьемся с тегэами
+Файл отдельно можно посмотреть [здесь](src/pro-one-cicd/gitlab-ci.yml)
+
+```
+stages:
+  - build
+  - deploy
+
+variables:
+  BUILD_IMAGE: ""
+  IMAGE_TAG: ""
+  RELEASE_NAME: pro-one-app
+  FQDN_PROD: pro-one-app.galkin.work
+
+.build:
+  tags:
+  - shell
+  stage: build
+  script:
+    - cat $YA_CI_REGISTRY_KEY|base64 -d|docker login --username json_key --password-stdin   cr.yandex
+    - touch .dockerignore && for i in $(echo ".git" "**/.git" ".gitlab-ci.yml" "Dockerfile" ); do grep -qxF ${i} .dockerignore || echo ${i} >> .dockerignore; done
+    - docker build -t "${BUILD_IMAGE}:${IMAGE_TAG}" -t "${BUILD_IMAGE}:latest" -f Dockerfile .
+    - docker push -a ${BUILD_IMAGE}
+    - docker rmi ${BUILD_IMAGE}:${IMAGE_TAG} ${BUILD_IMAGE}:latest
+    - echo "BUILD_IMAGE=$BUILD_IMAGE" > build.env
+    - echo "BUILD_IMAGE=$BUILD_IMAGE"
+    - echo "IMAGE_TAG=$IMAGE_TAG" >> build.env
+    - echo "IMAGE_TAG=$IMAGE_TAG"
+  artifacts:
+    when: on_success
+    reports:
+      dotenv: build.env
+
+build:prod:
+  variables:
+    CI_ENVIRONMENT: prod
+    BUILD_IMAGE: "${YA_CI_REGISTRY}/prooneapp-${CI_ENVIRONMENT}"
+    IMAGE_TAG: $CI_PIPELINE_IID
+    FQDN: $FQDN_PROD
+  extends: .build
+
+.deploy:
+  stage: deploy
+  tags:
+    - shell
+  before_script:
+    - export KUBECONFIG=$KUBECONFIG_FILE
+  script:
+    - helm --kubeconfig $KUBECONFIG upgrade --install --atomic --wait --timeout 3m --debug -f ./helm-chart/values.yaml --set environ=${CI_ENVIRONMENT_NAME} --set fqdn=${FQDN} --set image_and_tag=${IMAGE} --namespace=${NAMESPACE} --create-namespace ${RELEASE_NAME} ./helm-chart
+      
+deploy:prod:
+  variables:
+    NAMESPACE: $RELEASE_NAME-prod
+    KUBECONFIG_FILE: $YDX_KUBE_CONFIG_PROD
+    IMAGE: "${BUILD_IMAGE}:${IMAGE_TAG}"
+    FQDN: $FQDN_PROD
+  environment: prod
+  extends: .deploy
+  only:
+    refs:
+      - tags
+```
 
 </details>
 
 <details>
   <summary>Подготовим helm chart</summary>
 
-  Чарт готов.. деплой проходит
+[Chart.yaml](src/pro-one-helm/Chart.yaml) - сам чарт
+[values.yaml](src/pro-one-helm/values.yaml) - файл со значениями
+[deployment.yaml](src/pro-one-helm/deployment.yaml) - деплоймент
+[ingress.yaml](src/pro-one-helm/ingress.yaml) - ингрес
+[service.yaml](src/pro-one-helm/service.yaml) - сервис
+[secret.yaml](src/pro-one-helm/secret.yaml) - в данном случае не используется, но будь у нас сертификаты, то они были бы там
+  
 </details>
 
 <details>
@@ -1247,11 +1319,44 @@ PS: Момент про изменения А-записей опускаю, к�
 * YDX_KUBE_CONFIG_PROD - данные из  .kube/config, могут менять при пересоздании кластера
 
 Также не стоит забывать, что наш gitlab-runner может не знать про наличие Яндекс облака, yc и кластера в кубернетес.
+</details>
+
+
+<details>
+  <summary>Проверки</summary>
+
+
+[Короткое видео действа](https://youtu.be/UB6rwg_WNhk)
+
+Cборка - билд:
+![](img/cicd-01.png)
+
+Сборка - билд и деплой с тэгом:
+![](img/cicd-02.png)
+
+![](img/cicd-03.png)
+
+![](img/cicd-04.png)
+
+Смотрим, что получилось - добавилось подов:
+![](img/cicd-05.png)
+
+Смотрим, что получилось - [pro-one-app.galkin.work](http://pro-one-app.galkin.work):
+![](img/cicd-06.png)
+
 
 </details>
 
 <details>
   <summary>Материалы по теме</summary>
+
+* [Девопсу на заметку: готовим Helm правильно](https://habr.com/ru/articles/558008/)
+* [Kubernetes (k8s) + Helm + GitLab CI/CD. Деплоим правильно](https://habr.com/ru/articles/422493/)
+* [Building a Kubernetes CI/CD Pipeline with GitLab and Helm](https://nextlinklabs.com/resources/insights/kubernetes-ci-cd-gitlab-with-helm)
+* [Погружение в Helm Package Manager. Часть вторая](https://habr.com/ru/companies/dataart/articles/589539/)
+* [CI/CD для Helm Charts](https://habr.com/ru/articles/676002/)
+* [Как вообще этот ваш CI CD настроить](https://habr.com/ru/articles/798551/)
+* [CI/CD YAML syntax reference](https://docs.gitlab.com/ee/ci/yaml/#only--except)
 </details>
 
 
