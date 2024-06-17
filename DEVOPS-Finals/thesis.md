@@ -1060,7 +1060,7 @@ monitoring    kube-prometheus-stack-prometheus-node-exporter-j2f8s        1/1   
 monitoring    prometheus-kube-prometheus-stack-prometheus-0               2/2     Running   0          70s
 ```
 
-Заходим-проверяем:
+Заходим-проверяем - - [k8s.galkin.work](http://k8s.galkin.work):
 ```
 login: admin
 password: nil1faeP6eph
