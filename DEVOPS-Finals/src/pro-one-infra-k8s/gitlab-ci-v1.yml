@@ -1,0 +1,50 @@
+stages:
+  - iac_init
+  - iac_validate
+  - iac_plan
+  - iac_apply
+
+terraform_init:
+  tags:
+  - shell
+  stage: iac_init
+  script:
+    - tofu -chdir=k8s init -upgrade
+  when: always
+
+terraform_validate:
+  tags:
+  - shell
+  stage: iac_validate
+  script:
+    - chmod +x -R k8s/.terraform/providers/
+    - tofu -chdir=k8s validate
+  when: on_success  
+  dependencies:
+    - terraform_init
+
+terraform_plan:
+  tags:
+  - shell
+  stage: iac_plan
+  script: 
+    - chmod +x -R k8s/.terraform/providers/
+    - tofu -chdir=k8s plan
+  when: on_success
+  dependencies:
+    - terraform_validate
+   
+terraform_apply:
+  tags:
+  - shell
+  stage: iac_apply
+  script:
+    - chmod +x -R k8s/.terraform/providers/    
+    - tofu -chdir=k8s apply --auto-approve 
+  when: manual
+  allow_failure: false
+  only:
+    refs:
+      - main
+  dependencies:
+    - terraform_plan

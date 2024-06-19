@@ -1206,6 +1206,43 @@ PS: Момент про изменения А-записей опускаю, к�
 
 </details>
 
+
+<details>
+  <summary>CI/CD для Gitlab и проверка автоматизации</summary>
+
+Первоначальный вариант [gitlab-ci.yml](src/pro-one-infra-k8s/gitlab-ci-v1.yml) - eго идея заключается в автоматическом init/validate/plan и ручном добавлении апдейта, на мой взгляд это более предпочтительный вариант, чем автоматический apply в инфру. Мало ли все-таки.
+
+![cicd-07](img/cicd-07.png)
+
+![cicd-08](img/cicd-08.png)
+
+![cicd-09](img/cicd-09.png)
+
+Вариант [gitlab-ci.yml](src/pro-one-infra-k8s/gitlab-ci-v2.yml) по заданию - автоматический пролет - это почти то же самое, изменения в последнем акте и оно минимальное по сути. В обоих вариантах присутствуют зависимость по джобам.
+
+![cicd-10](img/cicd-10.png)
+
+![cicd-11](img/cicd-11.png)
+
+![cicd-12](img/cicd-12.png)
+
+![cicd-13](img/cicd-13.png)
+
+![cicd-14](img/cicd-14.png)
+
+![cicd-15](img/cicd-15.png)
+
+И на последок, где мы действительно что-то поменяли в кластере, а не просто в репе:
+
+![cicd-17](img/cicd-17.png)
+
+![cicd-18](img/cicd-18.png)
+
+![cicd-16](img/cicd-16.png)
+
+</details>
+
+
 <details>
   <summary>Материалы по теме</summary>
 
@@ -1220,6 +1257,7 @@ PS: Момент про изменения А-записей опускаю, к�
   * [Butname Charts](https://github.com/bitnami/charts/tree/main/bitnami)
   * [End to end monitoring with the Prometheus Operator](https://www.youtube.com/watch?v=5Jr1v9mWnJc)
   * [Using Helm to deploy to a kubernetes cluster pulling images from a private container registry](https://hamidshahid.blogspot.com/2018/07/using-helm-to-deploy-to-kubernetes.html) 
+  * [Error: Could not load plugin - permission denied or exec format error](https://support.hashicorp.com/hc/en-us/articles/4409220280339-Error-Could-not-load-plugin-permission-denied-or-exec-format-error)
 </details>
 
 ### Установка и настройка CI/CD
