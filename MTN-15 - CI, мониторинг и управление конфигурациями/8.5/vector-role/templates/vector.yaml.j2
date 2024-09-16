@@ -1,0 +1,25 @@
+---
+
+sources:
+  internal_logs:
+    type: internal_logs
+  local_logs:
+    type: file
+    include:
+      - /var/log/**/*.log
+    read_from: beginning
+sinks:
+  local_to_clickhouse:
+    type: clickhouse
+    inputs:
+      - local_logs
+    database: logs
+    endpoint: http://{{ clickhouse_host }}:8123
+    table: vector_internal_logs
+    auth:
+      user: "{{ clickhouse_user }}"
+      password: "{{ clickhouse_password }}"
+      strategy: basic
+    compression: gzip
+    healthcheck: false
+    skip_unknown_fields: true
